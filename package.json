@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "jest": "^29.7.0",
+    "node-postgres": "^0.6.2",
+    "pg": "^8.14.1",
+    "pg-format": "^1.0.4",
+    "supertest": "^7.1.0"
+  },
+  "name": "reading-backend-users",
+  "version": "1.0.0",
+  "description": "Backend user database for frontend reading app",
+  "main": "index.js",
+  "scripts": {
+    "setup-dbs": "psql -f db/setup.sql",
+    "seed": "PGDATABASE=dear_reader_users node ./db/seeds/run-seed.js",
+    "test": "jest",
+    "seed-test": "PGDATABASE=dear_reader_users_test node db/run-seed.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
