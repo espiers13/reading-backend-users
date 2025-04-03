@@ -14,64 +14,79 @@ POST /api/login
 accepts: {username: [username], password: [password]}
 returns user details
 
-NEW USER REQUEST
+### NEW USER REQUEST
+
 POST /api/signup
 accepts: {name: [name], username: [username], email: [email], password: [password]}
 returns user details
 
-GET USERNAME BY ID
+### GET USERNAME BY ID
+
 GET /api/user/:user_id
 returns username and avatar
 
-DELETE USER REQUEST
+### DELETE USER REQUEST
+
 DELETE /api/user/delete
 accepts: {username: [username], password: [password]}
 
-UPDATE USER DETAILS
+### UPDATE USER DETAILS
+
 PATCH /api/user
 accepts: {username: [username], password: [password], newData: {dataKey: [data]}}
 
-GET READ JOURNAL BY USERNAME
+### GET READ JOURNAL BY USERNAME
+
 GET /api/journal/:username
 returns array of books in read journal
 
-GET BOOKSHELF BY USERNAME
+### GET BOOKSHELF BY USERNAME
+
 GET /api/bookshelf/:username
 returns array of books in bookshelf
 
-ADD BOOK TO BOOKSHELF
+### ADD BOOK TO BOOKSHELF
+
 POST /api/bookshelf/:username
 accepts: {password: [password], newBook: {isbn: [isbn], title: [title]}}
 
-REMOVE BOOK FROM BOOKSHELF
+### REMOVE BOOK FROM BOOKSHELF
+
 DELETE /api/bookshelf/:username
 accepts: {password: [password], isbn: [isbn]}
 
-ADD A BOOK TO READ JOURNAL
+### ADD A BOOK TO READ JOURNAL
+
 POST /api/journal/:username
 accepts: {password: [password], newBook: {isbn: [isbn], title: [title]}}
 
-REMOVE BOOK FROM READ JOURNAL
+### REMOVE BOOK FROM READ JOURNAL
+
 DELETE /api/bookshelf/:username
 accepts: {password: [password], isbn: [isbn]}
 
-MOVE BOOK FROM BOOKSHELF TO READ JOURNAL
+### MOVE BOOK FROM BOOKSHELF TO READ JOURNAL
+
 PATCH /api/bookshelf/:username/move
 accepts: {password: [password], isbn: [isbn], rating: [rating], review: [review]}
 
-SEND FRIEND REQUEST
+### SEND FRIEND REQUEST
+
 POST /api/friends/request/:friend_id
 accepts: {username: [username], password: [password]}
 
-ACCEPT FRIEND REQUEST
+### ACCEPT FRIEND REQUEST
+
 POST /api/friends/accept/:friend_id
 accepts: {username: [username], password: [password]}
 
-GET FRIENDS LIST
+### GET FRIENDS LIST
+
 GET /api/friends/:username
 accepts: {password: [password]}
 
-GET PENDING FRIENDS LIST
+### GET PENDING FRIENDS LIST
+
 GET /api/friends/pending/:username
 accepts: {password: [password]}
 
