@@ -18,9 +18,14 @@
     "setup-dbs": "psql -f db/setup.sql",
     "seed": "PGDATABASE=dear_reader_users node ./db/seeds/run-seed.js",
     "test": "jest",
-    "seed-test": "PGDATABASE=dear_reader_users_test node db/run-seed.js"
+    "seed-test": "PGDATABASE=dear_reader_users_test node db/run-seed.js",
+    "start": "node listen.js",
+    "seed-prod": "NODE_ENV=production npm run seed"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "jest-sorted": "^1.0.15"
+  }
 }
