@@ -8,7 +8,8 @@ This is the backend service which provides user information including books save
 
 # Endpoints
 
-LOGIN REQUEST:
+### LOGIN REQUEST:
+
 POST /api/login
 accepts: {username: [username], password: [password]}
 returns user details
