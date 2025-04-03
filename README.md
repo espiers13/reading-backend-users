@@ -1,12 +1,12 @@
-## Dear Reader - Users Backend Database
+# Dear Reader - Users Backend Database
 
 Hosted on: Render
-// INSERT URL TO API //
+https://dear-reader-backend.onrender.com
 
 Dear Reader User Database is an API built for the purpose of accessing user data for a front end application.
 This is the backend service which provides user information including books saved and friend lists to the front end architecture.
 
-# Endpoints
+## Endpoints
 
 ### LOGIN REQUEST:
 
@@ -90,7 +90,7 @@ accepts: {password: [password]}
 GET /api/friends/pending/:username
 accepts: {password: [password]}
 
-# Dependencies
+## Dependencies
 
 This datbase is run with PostgreSQL and node-postgres.
 
@@ -99,7 +99,7 @@ To install PostgreSQL: https://www.w3schools.com/postgresql/postgresql_install.p
 To install npm:
 npm install npm@latest -g
 
-# Installation:
+## Installation:
 
 1. Clone the repo:
    https://github.com/espiers13/hidden-gems.git

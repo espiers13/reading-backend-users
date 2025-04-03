@@ -6,7 +6,7 @@ const saltRounds = 10;
 exports.fetchUserByUsernamePassword = (username, password) => {
   return db
     .query(
-      `SELECT username, name, password, email, id FROM users WHERE username = $1;`,
+      `SELECT username, name, password, email, id, avatar FROM users WHERE username = $1;`,
       [username]
     )
     .then(({ rows }) => {
