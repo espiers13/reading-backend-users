@@ -246,3 +246,52 @@ exports.fetchPendingList = (userId) => {
       return rows;
     });
 };
+
+exports.fetchFavouritesByUserId = (userId) => {
+  return db
+    .query(`SELECT id FROM users WHERE id = $1;`, [userId])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "User not found" });
+      } else
+        return db
+          .query(`SELECT isbn FROM favourites WHERE user_id = $1;`, [userId])
+          .then(({ rows }) => {
+            return rows;
+          });
+    });
+};
+
+exports.postFavouriteById = (userId, newBook) => {
+  const { isbn } = newBook;
+
+  return db
+    .query(`SELECT COUNT(*) FROM favourites WHERE user_id = $1;`, [userId])
+    .then(({ rows }) => {
+      if (rows[0].count === "3") {
+        return Promise.reject({
+          status: 400,
+          msg: "User can only have 3 favorite books",
+        });
+      } else
+        return db
+          .query(
+            `INSERT INTO favourites (user_id, isbn) VALUES ($1, $2) RETURNING *;`,
+            [userId, isbn]
+          )
+          .then(({ rows }) => {
+            return rows[0];
+          });
+    });
+};
+
+exports.removeFromFavourites = (userId, isbn) => {
+  return db
+    .query(
+      "DELETE FROM favourites WHERE user_id = $1 AND isbn = $2 RETURNING *;",
+      [userId, isbn]
+    )
+    .then((deletedBook) => {
+      return deletedBook;
+    });
+};

@@ -19,6 +19,9 @@ const {
   acceptFriendRequest,
   getFriendsList,
   getPendingFriendsList,
+  getFavouritesByUserId,
+  postNewFavourite,
+  deleteFromFavourites,
 } = require("./controllers/user-controllers");
 
 const {
@@ -95,6 +98,18 @@ app.get("/api/friends/:username", getFriendsList);
 // GET PENDING FRIENDS LIST
 
 app.get("/api/friends/pending/:username", getPendingFriendsList);
+
+// GET FAVOURITES
+
+app.get("/api/:user_id/favourites", getFavouritesByUserId);
+
+// POST NEW FAVOURITE
+
+app.post("/api/favourites", postNewFavourite);
+
+// DELETE FAVOURITE
+
+app.delete("/api/favourites/:isbn", deleteFromFavourites);
 
 app.use(handlePSQLErrors);
 app.use(handleCustomErrors);

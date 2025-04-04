@@ -2,9 +2,12 @@ const db = require("../index.js");
 const format = require("pg-format");
 const hashUsersData = require("./utils.js"); // Import the utility function
 
-const seed = ({ usersData, bookshelfData, booksReadData }) => {
+const seed = ({ usersData, bookshelfData, booksReadData, favouritesData }) => {
   return db
-    .query(`DROP TABLE IF EXISTS booksjournal;`)
+    .query(`DROP TABLE IF EXISTS favourites;`)
+    .then(() => {
+      return db.query(`DROP TABLE IF EXISTS booksjournal;`);
+    })
     .then(() => {
       return db.query(`DROP TABLE IF EXISTS bookshelf;`);
     })
@@ -63,6 +66,16 @@ const seed = ({ usersData, bookshelfData, booksReadData }) => {
         );`);
     })
     .then(() => {
+      return db.query(`
+      CREATE TABLE favourites (
+        id SERIAL PRIMARY KEY,
+        user_id INT REFERENCES users(id) ON DELETE CASCADE,
+        isbn VARCHAR(13) NOT NULL,
+        UNIQUE (user_id, isbn)
+      );
+      `);
+    })
+    .then(() => {
       return hashUsersData(usersData);
     })
     .then((hashedUsersData) => {
@@ -94,6 +107,13 @@ const seed = ({ usersData, bookshelfData, booksReadData }) => {
         )
       );
       return db.query(insertBooksJournalString);
+    })
+    .then(() => {
+      const insertFavouritesString = format(
+        "INSERT INTO favourites (user_id, isbn) VALUES %L RETURNING *;",
+        favouritesData.map(({ user_id, isbn }) => [user_id, isbn])
+      );
+      return db.query(insertFavouritesString);
     });
 };
 

@@ -16,6 +16,9 @@ const {
   addFriend,
   fetchFriendsList,
   fetchPendingList,
+  fetchFavouritesByUserId,
+  postFavouriteById,
+  removeFromFavourites,
 } = require("../models/user-models");
 
 exports.getUserByCredentials = (req, res, next) => {
@@ -278,6 +281,55 @@ exports.getPendingFriendsList = (req, res, next) => {
       fetchPendingList(id)
         .then((pendingList) => {
           res.status(200).send(pendingList);
+        })
+        .catch((err) => {
+          next(err);
+        });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getFavouritesByUserId = (req, res, next) => {
+  const { user_id } = req.params;
+
+  fetchFavouritesByUserId(user_id)
+    .then((favouritesData) => {
+      res.status(200).send(favouritesData);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postNewFavourite = (req, res, next) => {
+  const { username, password, newBook } = req.body;
+
+  fetchUserByUsernamePassword(username, password)
+    .then(({ id }) => {
+      postFavouriteById(id, newBook)
+        .then((postedBook) => {
+          res.status(201).send(postedBook);
+        })
+        .catch((err) => {
+          next(err);
+        });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteFromFavourites = (req, res, next) => {
+  const { username, password } = req.body;
+  const { isbn } = req.params;
+
+  fetchUserByUsernamePassword(username, password)
+    .then(({ id }) => {
+      removeFromFavourites(id, isbn)
+        .then((deletedBook) => {
+          res.status(204).send(deletedBook);
         })
         .catch((err) => {
           next(err);

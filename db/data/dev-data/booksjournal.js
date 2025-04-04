@@ -80,12 +80,28 @@ module.exports = [
     rating: 4,
   },
   {
-    user_id: 5,
-    isbn: "9780062457713",
+    user_id: 6,
+    isbn: "9781398515703",
     title: "The Seven Husbands of Evelyn Hugo",
-    date_read: "2025-02-14",
+    date_read: "2025-02-18",
     review:
       "So juicy and dramatic—I couldn’t get enough! Evelyn Hugo is iconic.",
     rating: 5,
+  },
+  {
+    user_id: 6,
+    isbn: "9781526635297",
+    title: "Throne of Glass",
+    date_read: "2025-02-14",
+    review: null,
+    rating: 5,
+  },
+  {
+    user_id: 6,
+    isbn: "9781526635365",
+    title: "A Court of Silver Flames",
+    date_read: "2024-12-10",
+    review: null,
+    rating: 4,
   },
 ];

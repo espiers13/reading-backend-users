@@ -524,3 +524,78 @@ describe("GET /api/friends/pending/:username - See all pending friend requests",
       });
   });
 });
+
+describe("GET /api/:user_id/favourites - Get favourites by user_id", () => {
+  test("Status 200: Returns an array of objects containing isbns linking to given user_id", () => {
+    return request(app)
+      .get("/api/6/favourites")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body)).toBe(true);
+        expect(body.length).toBeGreaterThan(0);
+        body.forEach((favourite) => {
+          expect(favourite).toHaveProperty("isbn");
+        });
+      });
+  });
+  test("Status 200: Returns an empty array when user has no favourites", () => {
+    return request(app)
+      .get("/api/1/favourites")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual([]);
+      });
+  });
+  test("Status 404: Returns appropriate status code and message when user does not exist", () => {
+    return request(app)
+      .get("/api/15/favourites")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("User not found");
+      });
+  });
+});
+
+describe("POST /api/favourites - Post new book to favourites", () => {
+  test("Status 201: posts a new book to users favourites when given correct credentials, then returns added book data", () => {
+    const input = {
+      username: "e.spiers13",
+      password: "test",
+      newBook: { isbn: "9781526635297" },
+    };
+    return request(app)
+      .post("/api/favourites")
+      .send(input)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toEqual({ id: 13, user_id: 6, isbn: "9781526635297" });
+      });
+  });
+  test("Status 400: returns appropriate status code and message when user already has 3 books in favourites", () => {
+    const input = {
+      username: "bob_smith",
+      password: "Secure#5678",
+      newBook: { isbn: "9781526635297" },
+    };
+    return request(app)
+      .post("/api/favourites")
+      .send(input)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("User can only have 3 favorite books");
+      });
+  });
+});
+
+describe.only("DELETE /api/favourites/:isbn - Delete book from favourites", () => {
+  test("Status 204: Deletes book from favourites when passed through correct credentils, and a book isbn", () => {
+    const input = {
+      username: "e.spiers13",
+      password: "test",
+    };
+    return request(app)
+      .delete("/api/favourites/9780439139601")
+      .send(input)
+      .expect(204);
+  });
+});

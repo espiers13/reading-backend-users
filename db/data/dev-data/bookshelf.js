@@ -13,4 +13,10 @@ module.exports = [
   { user_id: 4, isbn: "9780735219090", title: "Atomic Habits" },
   { user_id: 5, isbn: "9780345803481", title: "The Handmaid’s Tale" },
   { user_id: 5, isbn: "9780743273565", title: "The Great Gatsby" },
+  {
+    user_id: 6,
+    isbn: "9780439139601",
+    title: "Harry Potter and the Prisoner of Azkaban",
+  },
+  { user_id: 6, isbn: "9780061120084", title: "To Kill a Mockingbird" },
 ];
