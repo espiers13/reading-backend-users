@@ -225,84 +225,36 @@ describe("GET /api/bookshelf/:username - Get bookshelf by username", () => {
   });
 });
 
-describe("POST /api/bookshelf/:username - Add a new book to bookshelf", () => {
+describe("POST /api/bookshelf - Add a new book to bookshelf", () => {
   test("Status 201: Posts a new book object to bookshelf database, linking to user_id when correct username and password are passed through", () => {
     const input = {
-      password: "Pass@1234",
+      user_id: 1,
       newBook: {
         isbn: "9780743273565",
         title: "The Great Gatsby",
       },
     };
     return request(app)
-      .post(`/api/bookshelf/alice_j`)
+      .post(`/api/bookshelf`)
       .send(input)
       .then(({ body }) => {
         expect(body.title).toBe("The Great Gatsby");
       });
   });
-  test("Status 401: Returns appropriate error code and message when incorrect password is sent through", () => {
-    const input = {
-      password: "notthepassword",
-      newBook: {
-        isbn: "9780743273565",
-        title: "The Great Gatsby",
-      },
-    };
-
-    return request(app)
-      .post(`/api/bookshelf/alice_j`)
-      .send(input)
-      .expect(401)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Invalid password");
-      });
-  });
 });
 
-describe("DELETE /api/bookshelf/:username - Delete a book from the bookshelf", () => {
-  test("Status 204: Deletes a book from users bookshelf when passed an isbn, and when username and password match", () => {
-    const input = {
-      password: "Pass@1234",
-      isbn: "9780140449136",
-    };
-
+describe("DELETE /api/bookshelf/:user_id?isbn=[isbn] - Delete a book from the bookshelf", () => {
+  test("Status 204: Deletes a book from users bookshelf when passed an isbn and user_id", () => {
     return request(app)
-      .delete(`/api/bookshelf/alice_j`)
-      .send(input)
+      .delete(`/api/bookshelf/1?isbn="9780140449136"`)
       .expect(204);
   });
-
-  test("Status 401: Returns appropriate error code and message when incorrect password is sent through", () => {
-    const input = { password: "notthepassword", isbn: "9780140449136" };
-    return request(app)
-      .delete(`/api/bookshelf/alice_j`)
-      .send(input)
-      .expect(401)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Invalid password");
-      });
-  });
-
-  test("Status 404: Returns appropriate error code and message when isbn does not exist in the users bookshelf", () => {
-    const input = {
-      password: "Pass@1234",
-      isbn: "9781400032716",
-    };
-    return request(app)
-      .delete(`/api/bookshelf/alice_j`)
-      .send(input)
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Book not found");
-      });
-  });
 });
 
-describe("POST /api/journal/:username - Add a new book to journal", () => {
+describe("POST /api/journal - Add a new book to journal", () => {
   test("Status 201: Posts a new book object to journal database, linking to user_id when correct username and password are passed through", () => {
     const input = {
-      password: "Pass@1234",
+      user_id: "1",
       newBook: {
         isbn: "9780743273565",
         title: "The Great Gatsby",
@@ -311,7 +263,7 @@ describe("POST /api/journal/:username - Add a new book to journal", () => {
     };
 
     return request(app)
-      .post(`/api/journal/alice_j`)
+      .post(`/api/journal`)
       .send(input)
       .then(({ body }) => {
         expect(body).toHaveProperty("id");
@@ -322,72 +274,26 @@ describe("POST /api/journal/:username - Add a new book to journal", () => {
         expect(body).toHaveProperty("date_read");
       });
   });
-  test("Status 401: Returns appropriate error code and message when incorrect password is sent through", () => {
-    const input = {
-      password: "notthepassword",
-      newBook: {
-        isbn: "9780743273565",
-        title: "The Great Gatsby",
-      },
-    };
+});
 
+describe("DELETE /api/journal/:user_id?isbn=[isbn]` - Delete a book from the journal", () => {
+  test("Status 204: Deletes a book from users journal when passed an isbn and user_id", () => {
     return request(app)
-      .post(`/api/journal/alice_j`)
-      .send(input)
-      .expect(401)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Invalid password");
-      });
+      .delete(`/api/journal/1?isbn="9780385533225"`)
+      .expect(204);
   });
 });
 
-describe("DELETE /api/journal/:username - Delete a book from the journal", () => {
-  test("Status 204: Deletes a book from users journal when passed an isbn, and when username and password match", () => {
-    const input = {
-      password: "Pass@1234",
-      isbn: "9781524763169",
-    };
-
-    return request(app).delete(`/api/journal/alice_j`).send(input).expect(204);
-  });
-
-  test("Status 401: Returns appropriate error code and message when incorrect password is sent through", () => {
-    const input = { password: "notthepassword", isbn: "9781524763169" };
-    return request(app)
-      .delete(`/api/journal/alice_j`)
-      .send(input)
-      .expect(401)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Invalid password");
-      });
-  });
-
-  test("Status 404: Returns appropriate error code and message when isbn does not exist in the users journal", () => {
-    const input = {
-      password: "Pass@1234",
-      isbn: "9780553380163",
-    };
-    return request(app)
-      .delete(`/api/journal/alice_j`)
-      .send(input)
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Book not found");
-      });
-  });
-});
-
-describe("PATCH /api/bookshelf/:username/move - Move book from bookshelf to journal", () => {
+describe("PATCH /api/bookshelf/:user_id/move - Move book from bookshelf to journal", () => {
   test("Status 201: Deletes book data from bookshelf and adds it to the journal instead. Returns journal data", () => {
     const input = {
-      password: "Secure#5678",
       isbn: "9781501173219",
       rating: 3,
       review: "It was good!",
     };
 
     return request(app)
-      .patch("/api/bookshelf/bob_smith/move")
+      .patch("/api/bookshelf/2/move")
       .send(input)
       .expect(201)
       .then(({ body }) => {
@@ -400,31 +306,14 @@ describe("PATCH /api/bookshelf/:username/move - Move book from bookshelf to jour
       });
   });
 
-  test("Status 401: Returns appropriate error code and message when incorrect password is sent through", () => {
-    const input = {
-      password: "notthepassword",
-      isbn: "9781501173219",
-      rating: 3,
-      review: "It was good!",
-    };
-    return request(app)
-      .patch("/api/bookshelf/bob_smith/move")
-      .send(input)
-      .expect(401)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Invalid password");
-      });
-  });
-
   test("Status 404: Returns appropriate error code and message when isbn does not exist in the users journal", () => {
     const input = {
-      password: "Secure#5678",
       isbn: "9780743273565",
       rating: 3,
       review: "It was good!",
     };
     return request(app)
-      .patch("/api/bookshelf/bob_smith/move")
+      .patch("/api/bookshelf/2/move")
       .send(input)
       .expect(404)
       .then(({ body }) => {
@@ -435,7 +324,7 @@ describe("PATCH /api/bookshelf/:username/move - Move book from bookshelf to jour
 
 describe("POST /api/friends/request/:friend_id - Send a friend request", () => {
   test("Status 200: Inserts a new friend request into friendships table with status: pending", () => {
-    const input = { username: "alice_j", password: "Pass@1234" };
+    const input = { user_id: 1 };
     return request(app)
       .post("/api/friends/request/4")
       .send(input)
@@ -448,7 +337,7 @@ describe("POST /api/friends/request/:friend_id - Send a friend request", () => {
 
 describe("POST /api/friends/accept/:friend_id - Accept a friend request", () => {
   test("Status 200: Changes friend request status to accepted", async () => {
-    const input = { username: "alice_j", password: "Pass@1234" };
+    const input = { user_id: 1 };
 
     await request(app).post("/api/friends/request/4").send(input).expect(200);
 
@@ -462,10 +351,9 @@ describe("POST /api/friends/accept/:friend_id - Accept a friend request", () => 
   });
 });
 
-describe("GET /api/friends/:username - See all friends", () => {
+describe("GET /api/friends/:user_id - See all friends", () => {
   test("Status 200: Returns an array of all friend_id user is friends with", async () => {
-    const input = { username: "alice_j", password: "Pass@1234" };
-    const listInput = { password: "Pass@1234" };
+    const input = { user_id: 1 };
 
     // Step 1: Send a friend request
     await request(app).post("/api/friends/request/4").send(input).expect(200);
@@ -475,8 +363,7 @@ describe("GET /api/friends/:username - See all friends", () => {
 
     // Step 3: Get the friends list
     return request(app)
-      .get("/api/friends/alice_j")
-      .send(listInput)
+      .get("/api/friends/1")
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body)).toBe(true);
@@ -490,16 +377,14 @@ describe("GET /api/friends/:username - See all friends", () => {
 
 describe("GET /api/friends/pending/:username - See all pending friend requests", () => {
   test("Status 200: Returns an array of all friend_id user is friends with", async () => {
-    const input = { username: "alice_j", password: "Pass@1234" };
-    const listInput = { password: "Pass@1234" };
+    const input = { user_id: 1 };
 
     // Step 1: Send a friend request
     await request(app).post("/api/friends/request/4").send(input).expect(200);
 
     // Step 2: Get the pending friends list
     return request(app)
-      .get("/api/friends/pending/alice_j")
-      .send(listInput)
+      .get("/api/friends/pending/1")
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body)).toBe(true);
@@ -545,8 +430,7 @@ describe("GET /api/:user_id/favourites - Get favourites by user_id", () => {
 describe("POST /api/favourites - Post new book to favourites", () => {
   test("Status 201: posts a new book to users favourites when given correct credentials, then returns added book data", () => {
     const input = {
-      username: "e.spiers13",
-      password: "test",
+      user_id: "6",
       newBook: { isbn: "9781398515703" },
     };
     return request(app)
@@ -559,8 +443,7 @@ describe("POST /api/favourites - Post new book to favourites", () => {
   });
   test("Status 409: returns appropriate status code and message when book already exists in favourites", () => {
     const input = {
-      username: "e.spiers13",
-      password: "test",
+      user_id: "6",
       newBook: { isbn: "9781526635297" },
     };
     return request(app)
@@ -575,8 +458,7 @@ describe("POST /api/favourites - Post new book to favourites", () => {
   });
   test("Status 400: returns appropriate status code and message when user already has 3 books in favourites", () => {
     const input = {
-      username: "bob_smith",
-      password: "Secure#5678",
+      user_id: 2,
       newBook: { isbn: "9781526635297" },
     };
     return request(app)
@@ -592,12 +474,9 @@ describe("POST /api/favourites - Post new book to favourites", () => {
 describe("DELETE /api/favourites/:isbn - Delete book from favourites", () => {
   test("Status 204: Deletes book from favourites when passed through correct credentils, and a book isbn", () => {
     const input = {
-      username: "e.spiers13",
-      password: "test",
+      user_id: 6,
+      isbn: "9780439139601",
     };
-    return request(app)
-      .delete("/api/favourites/9780439139601")
-      .send(input)
-      .expect(204);
+    return request(app).delete("/api/favourites").send(input).expect(204);
   });
 });
