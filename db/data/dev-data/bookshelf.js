@@ -15,8 +15,9 @@ module.exports = [
   { user_id: 5, isbn: "9780743273565", title: "The Great Gatsby" },
   {
     user_id: 6,
-    isbn: "9780439139601",
-    title: "Harry Potter and the Prisoner of Azkaban",
+    isbn: "9780349436982",
+    title: "Fourth Wing",
   },
-  { user_id: 6, isbn: "9780061120084", title: "To Kill a Mockingbird" },
+  { user_id: 6, isbn: "9781635577020", title: "House of Earth and Blood" },
+  { user_id: 6, isbn: "9781635574074", title: "House of Sky and Death" },
 ];

@@ -150,9 +150,13 @@ exports.postJournal = (req, res, next) => {
 
   fetchUserByUsernamePassword(username, password)
     .then(({ id }) => {
-      postToJournal(id, newBook).then((bookData) => {
-        res.status(201).send(bookData);
-      });
+      postToJournal(id, newBook)
+        .then((bookData) => {
+          res.status(201).send(bookData);
+        })
+        .catch((err) => {
+          next(err);
+        });
     })
     .catch((err) => {
       next(err);

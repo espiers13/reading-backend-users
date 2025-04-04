@@ -9,6 +9,6 @@ module.exports = [
   { user_id: 4, isbn: "9780735219090" }, // Atomic Habits
   { user_id: 5, isbn: "9780345803481" }, // Fifty Shades of Grey
   { user_id: 5, isbn: "9780743273565" }, // The Great Gatsby
-  { user_id: 6, isbn: "9781635574966" }, // Throne of Glass by Sarah J. Maas
-  { user_id: 6, isbn: "9781619634442" }, // A Court of Mist and Fury by Sarah J. Maas
+  { user_id: 6, isbn: "9781526635297" }, // Throne of Glass by Sarah J. Maas
+  { user_id: 6, isbn: "9781408857892" }, // A Court of Mist and Fury by Sarah J. Maas
 ];

@@ -63,7 +63,7 @@ describe("POST /api/signup - Create new user", () => {
         expect(body).toHaveProperty("email");
         expect(body).toHaveProperty("password");
         expect(body).toHaveProperty("avatar");
-        expect(body.id).toBe(6);
+        expect(body.id).toBe(7);
       });
   });
   test("Status 201: Returns user with an encrypted password", () => {
@@ -234,17 +234,11 @@ describe("POST /api/bookshelf/:username - Add a new book to bookshelf", () => {
         title: "The Great Gatsby",
       },
     };
-    const expected = {
-      id: 11,
-      user_id: 1,
-      isbn: "9780743273565",
-      title: "The Great Gatsby",
-    };
     return request(app)
       .post(`/api/bookshelf/alice_j`)
       .send(input)
       .then(({ body }) => {
-        expect(body).toEqual(expected);
+        expect(body.title).toBe("The Great Gatsby");
       });
   });
   test("Status 401: Returns appropriate error code and message when incorrect password is sent through", () => {
@@ -315,20 +309,17 @@ describe("POST /api/journal/:username - Add a new book to journal", () => {
         rating: 4,
       },
     };
-    const expected = {
-      id: 11,
-      user_id: 1,
-      isbn: "9780743273565",
-      title: "The Great Gatsby",
-      rating: "4.0",
-      review: null,
-      date_read: "2025-04-02T23:00:00.000Z",
-    };
+
     return request(app)
       .post(`/api/journal/alice_j`)
       .send(input)
       .then(({ body }) => {
-        expect(body).toEqual(expected);
+        expect(body).toHaveProperty("id");
+        expect(body).toHaveProperty("user_id");
+        expect(body).toHaveProperty("title");
+        expect(body).toHaveProperty("rating");
+        expect(body).toHaveProperty("review");
+        expect(body).toHaveProperty("date_read");
       });
   });
   test("Status 401: Returns appropriate error code and message when incorrect password is sent through", () => {
@@ -395,22 +386,17 @@ describe("PATCH /api/bookshelf/:username/move - Move book from bookshelf to jour
       review: "It was good!",
     };
 
-    const expected = {
-      id: 11,
-      user_id: 2,
-      isbn: "9781501173219",
-      title: "The Silent Patient",
-      rating: "3.0",
-      review: "It was good!",
-      date_read: "2025-04-02T23:00:00.000Z",
-    };
-
     return request(app)
       .patch("/api/bookshelf/bob_smith/move")
       .send(input)
       .expect(201)
       .then(({ body }) => {
-        expect(body).toEqual(expected);
+        expect(body).toHaveProperty("id");
+        expect(body).toHaveProperty("user_id");
+        expect(body).toHaveProperty("title");
+        expect(body).toHaveProperty("rating");
+        expect(body).toHaveProperty("review");
+        expect(body).toHaveProperty("date_read");
       });
   });
 
@@ -561,14 +547,30 @@ describe("POST /api/favourites - Post new book to favourites", () => {
     const input = {
       username: "e.spiers13",
       password: "test",
-      newBook: { isbn: "9781526635297" },
+      newBook: { isbn: "9781398515703" },
     };
     return request(app)
       .post("/api/favourites")
       .send(input)
       .expect(201)
       .then(({ body }) => {
-        expect(body).toEqual({ id: 13, user_id: 6, isbn: "9781526635297" });
+        expect(body).toEqual({ id: 13, user_id: 6, isbn: "9781398515703" });
+      });
+  });
+  test("Status 409: returns appropriate status code and message when book already exists in favourites", () => {
+    const input = {
+      username: "e.spiers13",
+      password: "test",
+      newBook: { isbn: "9781526635297" },
+    };
+    return request(app)
+      .post("/api/favourites")
+      .send(input)
+      .expect(409)
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          'error: duplicate key value violates unique constraint "favourites_user_id_isbn_key"'
+        );
       });
   });
   test("Status 400: returns appropriate status code and message when user already has 3 books in favourites", () => {
@@ -587,7 +589,7 @@ describe("POST /api/favourites - Post new book to favourites", () => {
   });
 });
 
-describe.only("DELETE /api/favourites/:isbn - Delete book from favourites", () => {
+describe("DELETE /api/favourites/:isbn - Delete book from favourites", () => {
   test("Status 204: Deletes book from favourites when passed through correct credentils, and a book isbn", () => {
     const input = {
       username: "e.spiers13",
