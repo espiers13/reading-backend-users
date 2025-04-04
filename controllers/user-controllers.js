@@ -164,7 +164,8 @@ exports.postJournal = (req, res, next) => {
 };
 
 exports.deleteFromJournal = (req, res, next) => {
-  const { password, isbn } = req.body;
+  const { password } = req.body; // Password from the request body
+  const { isbn } = req.query; // ISBN from the query parameter
   const { username } = req.params;
 
   fetchUserByUsernamePassword(username, password)
