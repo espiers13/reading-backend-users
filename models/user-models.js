@@ -130,13 +130,8 @@ exports.removeFromBookshelf = (isbn, id) => {
       `DELETE FROM bookshelf WHERE user_id = $1 AND isbn = $2 RETURNING *;`,
       [id, isbn]
     )
-    .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "Book not found",
-        });
-      } else return rows[0];
+    .then((data) => {
+      return data;
     });
 };
 
@@ -161,13 +156,8 @@ exports.removeFromJournal = (isbn, id) => {
       `DELETE FROM booksjournal WHERE user_id = $1 AND isbn = $2 RETURNING *;`,
       [id, isbn]
     )
-    .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "Book not found",
-        });
-      } else return rows[0];
+    .then((data) => {
+      return data;
     });
 };
 

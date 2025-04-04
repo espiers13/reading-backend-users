@@ -276,11 +276,9 @@ describe("POST /api/journal - Add a new book to journal", () => {
   });
 });
 
-describe("DELETE /api/journal/:user_id?isbn=[isbn]` - Delete a book from the journal", () => {
+describe.only("DELETE /api/journal/:user_id?isbn=[isbn]` - Delete a book from the journal", () => {
   test("Status 204: Deletes a book from users journal when passed an isbn and user_id", () => {
-    return request(app)
-      .delete(`/api/journal/1?isbn="9780385533225"`)
-      .expect(204);
+    return request(app).delete(`/api/journal/1?isbn=9780385533225`).expect(204);
   });
 });
 

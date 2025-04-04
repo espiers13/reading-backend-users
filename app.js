@@ -65,23 +65,23 @@ app.get("/api/bookshelf/:username", getBookshelfByUser);
 
 // ADD BOOK TO BOOKSHELF (books to read)
 
-app.post("/api/bookshelf/:username", postBookshelf);
+app.post("/api/bookshelf", postBookshelf);
 
 // REMOVE BOOK FROM BOOKSHELF
 
-app.delete("/api/bookshelf/:username", deleteFromBookshelf);
+app.delete("/api/bookshelf/:user_id", deleteFromBookshelf);
 
 // ADD A BOOK TO READ JOURNAL
 
-app.post("/api/journal/:username", postJournal);
+app.post("/api/journal", postJournal);
 
 // REMOVE BOOK FROM READ JOURNAL
 
-app.delete("/api/journal/:username", deleteFromJournal);
+app.delete("/api/journal/:user_id", deleteFromJournal);
 
 // MOVE BOOK FROM BOOKSHELF TO READ LIST
 
-app.patch("/api/bookshelf/:username/move", markBookAsRead);
+app.patch("/api/bookshelf/:user_id/move", markBookAsRead);
 
 // SEND FRIEND REQUEST
 
@@ -93,11 +93,11 @@ app.post("/api/friends/accept/:friend_id", acceptFriendRequest);
 
 // GET FRIENDS LIST
 
-app.get("/api/friends/:username", getFriendsList);
+app.get("/api/friends/:user_id", getFriendsList);
 
 // GET PENDING FRIENDS LIST
 
-app.get("/api/friends/pending/:username", getPendingFriendsList);
+app.get("/api/friends/pending/:user_id", getPendingFriendsList);
 
 // GET FAVOURITES
 
@@ -109,7 +109,7 @@ app.post("/api/favourites", postNewFavourite);
 
 // DELETE FAVOURITE
 
-app.delete("/api/favourites/:isbn", deleteFromFavourites);
+app.delete("/api/favourites", deleteFromFavourites);
 
 app.use(handlePSQLErrors);
 app.use(handleCustomErrors);
