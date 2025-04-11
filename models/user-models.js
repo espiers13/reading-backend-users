@@ -247,7 +247,7 @@ exports.fetchPendingList = (userId) => {
       SELECT u.id, u.username, u.avatar, f.status 
       FROM users u
       JOIN friendships f ON (u.id = f.friend_id OR u.id = f.user_id)
-      WHERE (f.friend_id = $1)
+      WHERE (f.user_id = $1 OR f.friend_id = $1)
       AND f.status = 'pending'
       AND u.id != $1`,
       [userId]
