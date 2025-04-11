@@ -89,7 +89,7 @@ app.post("/api/friends/request/:friend_id", friendRequest);
 
 // ACCEPT FRIEND REQUEST
 
-app.post("/api/friends/accept/:friend_id", acceptFriendRequest);
+app.patch("/api/friends/accept/:friend_id", acceptFriendRequest);
 
 // GET FRIENDS LIST
 
