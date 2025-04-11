@@ -5,7 +5,7 @@ const cors = require("cors");
 const {
   getUserByCredentials,
   postNewUser,
-  getUserById,
+  getUser,
   deleteUserByCredentials,
   patchUserData,
   postBookshelf,
@@ -43,9 +43,9 @@ app.post("/api/login", getUserByCredentials);
 
 app.post("/api/signup", postNewUser);
 
-// GET USER BY ID
+// GET USER
 
-app.get("/api/user/:user_id", getUserById);
+app.get("/api/user/:user", getUser);
 
 // DELETE USER REQUEST
 

@@ -44,15 +44,26 @@ exports.postNewUser = (req, res, next) => {
     });
 };
 
-exports.getUserById = (req, res, next) => {
-  const { user_id } = req.params;
-  fetchUserById(user_id)
-    .then((userData) => {
-      res.status(200).send(userData);
-    })
-    .catch((err) => {
-      next(err);
-    });
+exports.getUser = (req, res, next) => {
+  const { user } = req.params;
+
+  if (/^\d+$/.test(user)) {
+    fetchUserById(user)
+      .then((userData) => {
+        res.status(200).send(userData);
+      })
+      .catch((err) => {
+        next(err);
+      });
+  } else {
+    fetchIdByUsername(user)
+      .then((userData) => {
+        res.status(200).send(userData);
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
 };
 
 exports.deleteUserByCredentials = (req, res, next) => {

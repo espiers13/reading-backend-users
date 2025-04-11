@@ -107,6 +107,28 @@ describe("GET /api/user/:user_id - Get username by ID", () => {
   });
 });
 
+describe("GET /api/user/:username - Get user_id by username", () => {
+  test("Status 200: Returns an object containing user_id when passed a username", () => {
+    return request(app)
+      .get(`/api/user/e.spiers13`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          username: "e.spiers13",
+          id: 6,
+        });
+      });
+  });
+  test("Status 404: Returns appropriate status code and error message when username does not exist", () => {
+    return request(app)
+      .get(`/api/user/notauser`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("User not found");
+      });
+  });
+});
+
 describe("DELETE /api/user/delete - Delete user by credentials", () => {
   test("Status 204: Deletes user when username and password match, returns an empty object", () => {
     const credentials = { username: "bob_smith", password: "Secure#5678" };
@@ -333,7 +355,7 @@ describe("POST /api/friends/request/:friend_id - Send a friend request", () => {
   });
 });
 
-describe("POST /api/friends/accept/:friend_id - Accept a friend request", () => {
+describe("PATCH /api/friends/accept/:friend_id - Accept a friend request", () => {
   test("Status 200: Changes friend request status to accepted", async () => {
     const input = { user_id: 1 };
 
@@ -357,7 +379,7 @@ describe("GET /api/friends/:user_id - See all friends", () => {
     await request(app).post("/api/friends/request/4").send(input).expect(200);
 
     // Step 2: Accept the friend request
-    await request(app).post("/api/friends/accept/4").send(input).expect(200);
+    await request(app).patch("/api/friends/accept/4").send(input).expect(200);
 
     // Step 3: Get the friends list
     return request(app)
