@@ -206,12 +206,14 @@ exports.sendFriendRequest = (userId, friendId) => {
       );
     });
 };
+
 exports.addFriend = (userId, friendId) => {
   return db
     .query(
       `UPDATE friendships 
        SET status = 'accepted' 
-       WHERE user_id = $1 AND friend_id = $2 AND status = 'pending' 
+       WHERE (user_id = $1 AND friend_id = $2 OR user_id = $2 AND friend_id = $1)
+       AND status = 'pending' 
        RETURNING *;`,
       [userId, friendId]
     )

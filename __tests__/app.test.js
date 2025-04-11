@@ -342,7 +342,7 @@ describe("PATCH /api/bookshelf/:user_id/move - Move book from bookshelf to journ
   });
 });
 
-describe.only("POST /api/friends/request/:friend_id - Send a friend request", () => {
+describe("POST /api/friends/request/:friend_id - Send a friend request", () => {
   test("Status 200: Inserts a new friend request into friendships table with status: pending", () => {
     const input = { user_id: 1 };
     return request(app)
@@ -371,7 +371,7 @@ describe.only("PATCH /api/friends/accept/:friend_id - Accept a friend request", 
   });
 });
 
-describe.only("GET /api/friends/:user_id - See all friends", () => {
+describe("GET /api/friends/:user_id - See all friends", () => {
   test("Status 200: Returns an array of all friend_id user is friends with", async () => {
     const input = { user_id: 1 };
 
@@ -395,7 +395,7 @@ describe.only("GET /api/friends/:user_id - See all friends", () => {
   });
 });
 
-describe.only("GET /api/friends/pending/:username - See all pending friend requests", () => {
+describe("GET /api/friends/pending/:username - See all pending friend requests", () => {
   test("Status 200: Returns an array of all friend_id user is friends with", async () => {
     const input = { user_id: 1 };
 
