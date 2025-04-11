@@ -186,19 +186,39 @@ exports.moveBookToJournal = (isbn, user_id, rating, review) => {
 };
 
 exports.sendFriendRequest = (userId, friendId) => {
-  return db.query(
-    `INSERT INTO friendships (user_id, friend_id, status) VALUES ($1, $2, 'pending') ON CONFLICT DO NOTHING RETURNING *;`,
-    [userId, friendId]
-  );
-};
-
-exports.addFriend = (userId, friendId) => {
   return db
     .query(
-      `UPDATE friendships SET status = 'accepted' WHERE user_id = $1 AND friend_id = $2 RETURNING *;`,
+      `SELECT * FROM friendships 
+       WHERE (user_id = $1 AND friend_id = $2) 
+          OR (user_id = $2 AND friend_id = $1);`,
       [userId, friendId]
     )
     .then(({ rows }) => {
+      if (rows.length > 0) {
+        // If a friendship already exists in either direction
+        throw { status: 409, msg: "Friend request already exists." };
+      }
+
+      return db.query(
+        `INSERT INTO friendships (user_id, friend_id, status) 
+         VALUES ($1, $2, 'pending') RETURNING *;`,
+        [userId, friendId]
+      );
+    });
+};
+exports.addFriend = (userId, friendId) => {
+  return db
+    .query(
+      `UPDATE friendships 
+       SET status = 'accepted' 
+       WHERE user_id = $1 AND friend_id = $2 AND status = 'pending' 
+       RETURNING *;`,
+      [userId, friendId]
+    )
+    .then(({ rows }) => {
+      if (!rows.length) {
+        throw { status: 400, msg: "No pending friend request to accept." };
+      }
       return rows[0];
     });
 };

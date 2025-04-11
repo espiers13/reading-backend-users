@@ -371,7 +371,7 @@ describe("PATCH /api/friends/accept/:friend_id - Accept a friend request", () =>
   });
 });
 
-describe("GET /api/friends/:user_id - See all friends", () => {
+describe.only("GET /api/friends/:user_id - See all friends", () => {
   test("Status 200: Returns an array of all friend_id user is friends with", async () => {
     const input = { user_id: 1 };
 
