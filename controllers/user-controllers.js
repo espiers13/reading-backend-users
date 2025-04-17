@@ -19,6 +19,8 @@ const {
   fetchFavouritesByUserId,
   postFavouriteById,
   removeFromFavourites,
+  updateRating,
+  updateReview,
 } = require("../models/user-models");
 
 exports.getUserByCredentials = (req, res, next) => {
@@ -213,6 +215,31 @@ exports.logBookAsRead = (req, res, next) => {
         });
     }
   });
+};
+
+exports.updateJournal = (req, res, next) => {
+  const update = req.body;
+  const { user_id } = req.params;
+
+  if ("rating" in update) {
+    updateRating(update, user_id)
+      .then((updatedBook) => {
+        res.status(200).send(updatedBook);
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
+
+  if ("review" in update) {
+    updateReview(update, user_id)
+      .then((updatedBook) => {
+        res.status(200).send(updatedBook);
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
 };
 
 exports.friendRequest = (req, res, next) => {

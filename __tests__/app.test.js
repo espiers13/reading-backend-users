@@ -379,6 +379,33 @@ describe("POST /api/bookshelf/:user_id/read - log book as read in the journal", 
   });
 });
 
+describe("PATCH /api/journal/:user_id - update book rating or review with user_id and isbn", () => {
+  test("Status 200: Returns book in journal with updated rating", () => {
+    const input = { rating: 5, isbn: "9781526635365" };
+    const user_id = 6;
+
+    return request(app)
+      .patch(`/api/journal/${user_id}`)
+      .send(input)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.rating).toBe("5.0");
+      });
+  });
+  test("Status 200: Returns book in journal with updated review", () => {
+    const input = { review: "Loved it!", isbn: "9781526635365" };
+    const user_id = 6;
+
+    return request(app)
+      .patch(`/api/journal/${user_id}`)
+      .send(input)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.review).toBe("Loved it!");
+      });
+  });
+});
+
 describe("POST /api/friends/request/:friend_id - Send a friend request", () => {
   test("Status 200: Inserts a new friend request into friendships table with status: pending", () => {
     const input = { user_id: 1 };

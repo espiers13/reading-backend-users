@@ -23,6 +23,7 @@ const {
   postNewFavourite,
   deleteFromFavourites,
   logBookAsRead,
+  updateJournal,
 } = require("./controllers/user-controllers");
 
 const {
@@ -87,6 +88,10 @@ app.patch("/api/bookshelf/:user_id/move", markBookAsRead);
 // LOG BOOK AS READ
 
 app.post("/api/bookshelf/:user_id/read", logBookAsRead);
+
+// UPDATE BOOK IN JOURNAL
+
+app.patch("/api/journal/:user_id", updateJournal);
 
 // SEND FRIEND REQUEST
 

@@ -185,6 +185,32 @@ exports.moveBookToJournal = (isbn, user_id, rating, review) => {
     });
 };
 
+exports.updateRating = (update, user_id) => {
+  const { isbn, rating } = update;
+
+  return db
+    .query(
+      "UPDATE booksjournal SET rating = $1 WHERE user_id = $2 AND isbn = $3 RETURNING *",
+      [rating, user_id, isbn]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
+exports.updateReview = (update, user_id) => {
+  const { isbn, review } = update;
+
+  return db
+    .query(
+      "UPDATE booksjournal SET review = $1 WHERE user_id = $2 AND isbn = $3 RETURNING *",
+      [review, user_id, isbn]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
 exports.sendFriendRequest = (userId, friendId) => {
   return db
     .query(
