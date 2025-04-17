@@ -34,8 +34,7 @@ const seed = ({ usersData, bookshelfData, booksReadData, favouritesData }) => {
         CREATE TABLE bookshelf (   
           id SERIAL PRIMARY KEY,
           user_id INT REFERENCES users(id) ON DELETE CASCADE,
-          isbn VARCHAR(13) NOT NULL,
-          title TEXT NOT NULL
+          isbn VARCHAR(13) NOT NULL
         );
       `);
     })
@@ -45,7 +44,6 @@ const seed = ({ usersData, bookshelfData, booksReadData, favouritesData }) => {
           id SERIAL PRIMARY KEY,
           user_id INT REFERENCES users(id) ON DELETE CASCADE,
           isbn VARCHAR(13) NOT NULL,
-          title TEXT NOT NULL,
           date_read DATE DEFAULT (CURRENT_DATE),
           review VARCHAR,
           rating DECIMAL(2,1) CHECK (rating IN (1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5))
@@ -87,24 +85,21 @@ const seed = ({ usersData, bookshelfData, booksReadData, favouritesData }) => {
     })
     .then(() => {
       const insertBookshelfString = format(
-        "INSERT INTO bookshelf (user_id, isbn, title) VALUES %L RETURNING *;",
-        bookshelfData.map(({ user_id, isbn, title }) => [user_id, isbn, title])
+        "INSERT INTO bookshelf (user_id, isbn) VALUES %L RETURNING *;",
+        bookshelfData.map(({ user_id, isbn }) => [user_id, isbn])
       );
       return db.query(insertBookshelfString);
     })
     .then(() => {
       const insertBooksJournalString = format(
-        "INSERT INTO booksjournal (user_id, isbn, title, date_read, review, rating) VALUES %L RETURNING *;",
-        booksReadData.map(
-          ({ user_id, isbn, title, date_read, review, rating }) => [
-            user_id,
-            isbn,
-            title,
-            date_read,
-            review,
-            rating,
-          ]
-        )
+        "INSERT INTO booksjournal (user_id, isbn, date_read, review, rating) VALUES %L RETURNING *;",
+        booksReadData.map(({ user_id, isbn, date_read, review, rating }) => [
+          user_id,
+          isbn,
+          date_read,
+          review,
+          rating,
+        ])
       );
       return db.query(insertBooksJournalString);
     })

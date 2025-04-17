@@ -253,14 +253,13 @@ describe("POST /api/bookshelf - Add a new book to bookshelf", () => {
       user_id: 1,
       newBook: {
         isbn: "9780743273565",
-        title: "The Great Gatsby",
       },
     };
     return request(app)
       .post(`/api/bookshelf`)
       .send(input)
       .then(({ body }) => {
-        expect(body.title).toBe("The Great Gatsby");
+        expect(body.isbn).toBe("9780743273565");
       });
   });
 });
@@ -279,7 +278,6 @@ describe("POST /api/journal - Add a new book to journal", () => {
       user_id: "1",
       newBook: {
         isbn: "9780743273565",
-        title: "The Great Gatsby",
         rating: 4,
       },
     };
@@ -290,7 +288,6 @@ describe("POST /api/journal - Add a new book to journal", () => {
       .then(({ body }) => {
         expect(body).toHaveProperty("id");
         expect(body).toHaveProperty("user_id");
-        expect(body).toHaveProperty("title");
         expect(body).toHaveProperty("rating");
         expect(body).toHaveProperty("review");
         expect(body).toHaveProperty("date_read");
@@ -319,7 +316,6 @@ describe("PATCH /api/bookshelf/:user_id/move - Move book from bookshelf to journ
       .then(({ body }) => {
         expect(body).toHaveProperty("id");
         expect(body).toHaveProperty("user_id");
-        expect(body).toHaveProperty("title");
         expect(body).toHaveProperty("rating");
         expect(body).toHaveProperty("review");
         expect(body).toHaveProperty("date_read");
@@ -342,6 +338,47 @@ describe("PATCH /api/bookshelf/:user_id/move - Move book from bookshelf to journ
   });
 });
 
+describe("POST /api/bookshelf/:user_id/read - log book as read in the journal", () => {
+  test("Status 201: logs book as read and returns new book data", () => {
+    const input = {
+      isbn: "9781526634269",
+      rating: 5,
+      review: "Loved it!",
+    };
+    const user_id = 6;
+    return request(app)
+      .post(`/api/bookshelf/${user_id}/read`)
+      .send(input)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("id");
+        expect(body).toHaveProperty("user_id");
+        expect(body).toHaveProperty("rating");
+        expect(body).toHaveProperty("review");
+        expect(body).toHaveProperty("date_read");
+      });
+  });
+  test("Status 201: moves book from bookshelf to journal if book exists in bookshelf", () => {
+    const input = {
+      isbn: "9780349436982",
+      rating: 5,
+      review: "Loved it!",
+    };
+    const user_id = 6;
+    return request(app)
+      .post(`/api/bookshelf/${user_id}/read`)
+      .send(input)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("id");
+        expect(body).toHaveProperty("user_id");
+        expect(body).toHaveProperty("rating");
+        expect(body).toHaveProperty("review");
+        expect(body).toHaveProperty("date_read");
+      });
+  });
+});
+
 describe("POST /api/friends/request/:friend_id - Send a friend request", () => {
   test("Status 200: Inserts a new friend request into friendships table with status: pending", () => {
     const input = { user_id: 1 };
@@ -355,7 +392,7 @@ describe("POST /api/friends/request/:friend_id - Send a friend request", () => {
   });
 });
 
-describe.only("PATCH /api/friends/accept/:friend_id - Accept a friend request", () => {
+describe("PATCH /api/friends/accept/:friend_id - Accept a friend request", () => {
   test("Status 200: Changes friend request status to accepted", async () => {
     const input = { user_id: 1 };
 
@@ -407,7 +444,6 @@ describe("GET /api/friends/pending/:username - See all pending friend requests",
       .get("/api/friends/pending/4")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         expect(Array.isArray(body)).toBe(true);
         expect(body.length).toBeGreaterThan(0);
         body.forEach((friendship) => {

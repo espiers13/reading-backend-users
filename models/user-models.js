@@ -112,12 +112,12 @@ exports.fetchBookshelfById = (id) => {
 };
 
 exports.postToBookshelf = (id, newBook) => {
-  const { isbn, title } = newBook;
+  const { isbn } = newBook;
 
   return db
     .query(
-      `INSERT INTO bookshelf (user_id, isbn, title) VALUES ($1, $2, $3) RETURNING *`,
-      [id, isbn, title]
+      `INSERT INTO bookshelf (user_id, isbn) VALUES ($1, $2) RETURNING *`,
+      [id, isbn]
     )
     .then(({ rows }) => {
       return rows[0];
@@ -136,14 +136,14 @@ exports.removeFromBookshelf = (isbn, id) => {
 };
 
 exports.postToJournal = (id, newBook) => {
-  const { isbn, title, rating = null, review = null } = newBook;
+  const { isbn, rating = null, review = null } = newBook;
 
   return db
     .query(
-      `INSERT INTO booksjournal (user_id, isbn, title, rating, review) 
-       VALUES ($1, $2, $3, $4, $5) 
+      `INSERT INTO booksjournal (user_id, isbn, rating, review) 
+       VALUES ($1, $2, $3, $4) 
        RETURNING *;`,
-      [id, isbn, title, rating, review]
+      [id, isbn, rating, review]
     )
     .then(({ rows }) => {
       return rows[0];
@@ -167,11 +167,11 @@ exports.moveBookToJournal = (isbn, user_id, rating, review) => {
       `WITH moved_book AS (
          DELETE FROM bookshelf
          WHERE user_id = $1 AND isbn = $2
-         RETURNING user_id, title, isbn
+         RETURNING user_id, isbn
        )
-       INSERT INTO booksjournal (isbn, user_id, title, date_read, rating, review)
-       SELECT isbn, user_id, title, CURRENT_DATE, $3, $4
-       FROM moved_book
+       INSERT INTO booksjournal (isbn, user_id, date_read, rating, review)
+       SELECT m.isbn, m.user_id, CURRENT_DATE, $3, $4
+       FROM moved_book m
        RETURNING *;`,
       [user_id, isbn, rating, review]
     )

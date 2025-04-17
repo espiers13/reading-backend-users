@@ -154,10 +154,10 @@ exports.postJournal = (req, res, next) => {
       res.status(201).send(bookData);
     })
     .catch((err) => {
+      console.error("Error in postJournal:", err); // Add this for better debugging
       next(err);
     });
 };
-
 exports.deleteFromJournal = (req, res, next) => {
   const { isbn } = req.query; // ISBN from the query parameter
   const { user_id } = req.params;
@@ -182,6 +182,37 @@ exports.markBookAsRead = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.logBookAsRead = (req, res, next) => {
+  const { isbn, rating = null, review = null } = req.body;
+  const { user_id } = req.params;
+  const newBook = { isbn, rating, review };
+
+  fetchBookshelfById(user_id).then((bookshelfData) => {
+    if (bookshelfData.some((book) => book.isbn === isbn)) {
+      //if the book does exist in bookshelf
+      moveBookToJournal(isbn, user_id, rating, review)
+        .then((bookData) => {
+          res.status(201).send(bookData);
+        })
+        .catch((err) => {
+          console.error(err);
+          next(err);
+        });
+    }
+    if (!bookshelfData.some((book) => book.isbn === isbn)) {
+      //if book does not exist in bookshelf
+      postToJournal(user_id, newBook)
+        .then((bookData) => {
+          res.status(201).send(bookData);
+        })
+        .catch((err) => {
+          console.error(err);
+          next(err);
+        });
+    }
+  });
 };
 
 exports.friendRequest = (req, res, next) => {

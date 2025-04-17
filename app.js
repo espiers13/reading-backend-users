@@ -22,6 +22,7 @@ const {
   getFavouritesByUserId,
   postNewFavourite,
   deleteFromFavourites,
+  logBookAsRead,
 } = require("./controllers/user-controllers");
 
 const {
@@ -82,6 +83,10 @@ app.delete("/api/journal/:user_id", deleteFromJournal);
 // MOVE BOOK FROM BOOKSHELF TO READ LIST
 
 app.patch("/api/bookshelf/:user_id/move", markBookAsRead);
+
+// LOG BOOK AS READ
+
+app.post("/api/bookshelf/:user_id/read", logBookAsRead);
 
 // SEND FRIEND REQUEST
 
