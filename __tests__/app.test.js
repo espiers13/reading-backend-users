@@ -197,6 +197,31 @@ describe("PATCH /api/user - Update user information", () => {
   });
 });
 
+describe("PATCH /api/user/password - Update user password", () => {
+  test.only("Status 201: Updates user password when passed through new password and correct password/username", async () => {
+    const input = {
+      username: "bob_smith",
+      password: "Secure#5678",
+      newPassword: "newpassword",
+    };
+
+    await request(app).patch("/api/user/password").send(input).expect(201);
+
+    return request(app)
+      .post("/api/login")
+      .send({ username: "bob_smith", password: "newpassword" })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toMatchObject({
+          name: "Bob Smith",
+          username: "bob_smith",
+          email: "bob.smith@example.com",
+          id: 2,
+        });
+      });
+  });
+});
+
 describe("GET /api/journal/:username - Get journal by username", () => {
   test("Status 200: Returns an array containing journaled book objects when passed a username", () => {
     return request(app)

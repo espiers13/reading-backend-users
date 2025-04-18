@@ -21,6 +21,7 @@ const {
   removeFromFavourites,
   updateRating,
   updateReview,
+  updateUserPassword,
 } = require("../models/user-models");
 
 exports.getUserByCredentials = (req, res, next) => {
@@ -87,6 +88,19 @@ exports.patchUserData = (req, res, next) => {
   fetchUserByUsernamePassword(username, password)
     .then((userData) => {
       updateUserData(userData, newData).then((updatedData) => {
+        res.status(201).send(updatedData);
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchUserPassword = (req, res, next) => {
+  const { username, password, newPassword } = req.body;
+  fetchUserByUsernamePassword(username, password)
+    .then((userData) => {
+      updateUserPassword(userData, newPassword).then((updatedData) => {
         res.status(201).send(updatedData);
       });
     })

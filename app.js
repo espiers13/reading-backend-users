@@ -24,6 +24,7 @@ const {
   deleteFromFavourites,
   logBookAsRead,
   updateJournal,
+  patchUserPassword,
 } = require("./controllers/user-controllers");
 
 const {
@@ -56,6 +57,10 @@ app.delete("/api/user/delete", deleteUserByCredentials);
 // UPDATE USER DETAILS
 
 app.patch("/api/user", patchUserData);
+
+// UPDATE USER PASSWORD
+
+app.patch("/api/user/password", patchUserPassword);
 
 // GET READ JOURNAL BY USERNAME
 

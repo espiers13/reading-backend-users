@@ -95,6 +95,18 @@ exports.updateUserData = (userData, newData) => {
   });
 };
 
+exports.updateUserPassword = (userData, newPassword) => {
+  const { id } = userData;
+
+  return bcrypt.hash(newPassword, saltRounds).then((hashedPassword) => {
+    const queryStr = `UPDATE users SET password = $1 WHERE id = $2 RETURNING name, username, email, avatar, id`;
+
+    return db.query(queryStr, [hashedPassword, id]).then(({ rows }) => {
+      return rows[0];
+    });
+  });
+};
+
 exports.fetchJournalById = (id) => {
   return db
     .query("SELECT * FROM booksjournal WHERE user_id = $1", [id])
