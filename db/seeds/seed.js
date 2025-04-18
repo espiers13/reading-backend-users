@@ -25,7 +25,8 @@ const seed = ({ usersData, bookshelfData, booksReadData, favouritesData }) => {
           username VARCHAR(100) UNIQUE NOT NULL,
           email VARCHAR(255) UNIQUE NOT NULL,
           password TEXT NOT NULL,
-          avatar TEXT DEFAULT 'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg'
+          avatar TEXT DEFAULT 'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg',
+          pronouns TEXT DEFAULT NULL
         );
       `);
     })

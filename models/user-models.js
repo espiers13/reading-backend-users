@@ -6,7 +6,7 @@ const saltRounds = 10;
 exports.fetchUserByUsernamePassword = (username, password) => {
   return db
     .query(
-      `SELECT username, name, password, email, id, avatar FROM users WHERE username = $1;`,
+      `SELECT username, name, password, email, id, avatar, pronouns FROM users WHERE username = $1;`,
       [username]
     )
     .then(({ rows }) => {
@@ -39,7 +39,7 @@ exports.createNewUser = (newUser) => {
   const { name, username, email, password } = newUser;
 
   return bcrypt.hash(password, saltRounds).then((hashedPassword) => {
-    const queryStr = `INSERT INTO users (name, username, email, password) VALUES ($1, $2, $3, $4) RETURNING *;`;
+    const queryStr = `INSERT INTO users (name, username, email, password) VALUES ($1, $2, $3, $4) RETURNING username, name, password, email, id, avatar, pronouns;`;
     const values = [name, username, email, hashedPassword];
 
     return db.query(queryStr, values).then(({ rows }) => {
@@ -85,14 +85,22 @@ exports.removeUserData = (userData) => {
 exports.updateUserData = (userData, newData) => {
   const { id } = userData;
 
-  const dataKey = Object.keys(newData)[0];
-  const data = Object.values(newData)[0];
+  const keys = Object.keys(newData);
+  const values = Object.values(newData);
 
-  const queryStr = `UPDATE users SET ${dataKey} = $1 WHERE id = $2 RETURNING name, username, email, avatar, id;`;
+  // Create SET clause like: "name = $1, email = $2, ..."
+  const setClause = keys
+    .map((key, index) => `${key} = $${index + 1}`)
+    .join(", ");
 
-  return db.query(queryStr, [data, id]).then(({ rows }) => {
-    return rows[0];
-  });
+  const queryStr = `
+    UPDATE users 
+    SET ${setClause} 
+    WHERE id = $${keys.length + 1} 
+    RETURNING name, username, email, avatar, id, pronouns;
+  `;
+
+  return db.query(queryStr, [...values, id]).then(({ rows }) => rows[0]);
 };
 
 exports.updateUserPassword = (userData, newPassword) => {

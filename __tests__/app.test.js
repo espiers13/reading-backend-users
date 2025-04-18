@@ -12,7 +12,7 @@ afterAll(() => {
   return db.end();
 });
 
-describe("POST /api/login - Authenticate user", () => {
+describe.only("POST /api/login - Authenticate user", () => {
   test("Status 200: returns user data when correct username and password are given", async () => {
     return request(app)
       .post("/api/login")
@@ -24,6 +24,7 @@ describe("POST /api/login - Authenticate user", () => {
           username: "bob_smith",
           email: "bob.smith@example.com",
           id: 2,
+          pronouns: null,
         });
       });
   });
@@ -44,7 +45,7 @@ describe("POST /api/login - Authenticate user", () => {
   });
 });
 
-describe("POST /api/signup - Create new user", () => {
+describe.only("POST /api/signup - Create new user", () => {
   test("Status 201: Accepts a newUser object and returns user", () => {
     const newUser = {
       name: "Emily Spiers",
@@ -61,8 +62,8 @@ describe("POST /api/signup - Create new user", () => {
         expect(body).toHaveProperty("name");
         expect(body).toHaveProperty("username");
         expect(body).toHaveProperty("email");
-        expect(body).toHaveProperty("password");
         expect(body).toHaveProperty("avatar");
+        expect(body).toHaveProperty("pronouns");
         expect(body.id).toBe(7);
       });
   });
@@ -152,7 +153,7 @@ describe("DELETE /api/user/delete - Delete user by credentials", () => {
   });
 });
 
-describe("PATCH /api/user - Update user information", () => {
+describe.only("PATCH /api/user - Update user information", () => {
   test("Status 201: Updates user data when passed through new data and correct password/username", () => {
     const body = {
       username: "bob_smith",
@@ -169,6 +170,35 @@ describe("PATCH /api/user - Update user information", () => {
       avatar:
         "https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg",
       id: 2,
+      pronouns: null,
+    };
+
+    return request(app)
+      .patch("/api/user")
+      .send(body)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toEqual(expected);
+      });
+  });
+  test("Status 201: Updates multiple pieces of user data when passed through new data and correct password/username", () => {
+    const body = {
+      username: "bob_smith",
+      password: "Secure#5678",
+      newData: {
+        email: "new@email.com",
+        username: "bobby",
+      },
+    };
+
+    const expected = {
+      name: "Bob Smith",
+      username: "bobby",
+      email: "new@email.com",
+      avatar:
+        "https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg",
+      id: 2,
+      pronouns: null,
     };
 
     return request(app)
@@ -198,7 +228,7 @@ describe("PATCH /api/user - Update user information", () => {
 });
 
 describe("PATCH /api/user/password - Update user password", () => {
-  test.only("Status 201: Updates user password when passed through new password and correct password/username", async () => {
+  test("Status 201: Updates user password when passed through new password and correct password/username", async () => {
     const input = {
       username: "bob_smith",
       password: "Secure#5678",
