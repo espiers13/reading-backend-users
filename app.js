@@ -52,7 +52,7 @@ app.get("/api/user/:user", getUser);
 
 // DELETE USER REQUEST
 
-app.delete("/api/user/delete", deleteUserByCredentials);
+app.post("/api/user/delete", deleteUserByCredentials);
 
 // UPDATE USER DETAILS
 

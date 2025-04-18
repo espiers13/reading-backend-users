@@ -12,7 +12,7 @@ afterAll(() => {
   return db.end();
 });
 
-describe.only("POST /api/login - Authenticate user", () => {
+describe("POST /api/login - Authenticate user", () => {
   test("Status 200: returns user data when correct username and password are given", async () => {
     return request(app)
       .post("/api/login")
@@ -45,7 +45,7 @@ describe.only("POST /api/login - Authenticate user", () => {
   });
 });
 
-describe.only("POST /api/signup - Create new user", () => {
+describe("POST /api/signup - Create new user", () => {
   test("Status 201: Accepts a newUser object and returns user", () => {
     const newUser = {
       name: "Emily Spiers",
@@ -130,11 +130,11 @@ describe("GET /api/user/:username - Get user_id by username", () => {
   });
 });
 
-describe("DELETE /api/user/delete - Delete user by credentials", () => {
+describe.only("DELETE /api/user/delete - Delete user by credentials", () => {
   test("Status 204: Deletes user when username and password match, returns an empty object", () => {
     const credentials = { username: "bob_smith", password: "Secure#5678" };
     return request(app)
-      .delete(`/api/user/delete`)
+      .post(`/api/user/delete`)
       .send(credentials)
       .expect(204)
       .then(({ body }) => {
@@ -144,7 +144,7 @@ describe("DELETE /api/user/delete - Delete user by credentials", () => {
   test("Status 401: Returns appropriate error code and message when incorrect password is sent through", () => {
     const credentials = { username: "bob_smith", password: "notthepassword" };
     return request(app)
-      .delete(`/api/user/delete`)
+      .post(`/api/user/delete`)
       .send(credentials)
       .expect(401)
       .then(({ body }) => {
@@ -153,7 +153,7 @@ describe("DELETE /api/user/delete - Delete user by credentials", () => {
   });
 });
 
-describe.only("PATCH /api/user - Update user information", () => {
+describe("PATCH /api/user - Update user information", () => {
   test("Status 201: Updates user data when passed through new data and correct password/username", () => {
     const body = {
       username: "bob_smith",
@@ -610,7 +610,7 @@ describe("POST /api/favourites - Post new book to favourites", () => {
   });
 });
 
-describe.only("DELETE /api/favourites - Delete book from favourites", () => {
+describe("DELETE /api/favourites - Delete book from favourites", () => {
   test("Status 204: Deletes book from favourites when passed through correct credentils, and a book isbn", () => {
     const input = {
       user_id: 6,
