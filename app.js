@@ -119,7 +119,7 @@ app.post("/api/favourites", postNewFavourite);
 
 // DELETE FAVOURITE
 
-app.delete("/api/favourites", deleteFromFavourites);
+app.post("/api/favourites/delete", deleteFromFavourites);
 
 app.use(handlePSQLErrors);
 app.use(handleCustomErrors);

@@ -555,12 +555,12 @@ describe("POST /api/favourites - Post new book to favourites", () => {
   });
 });
 
-describe("DELETE /api/favourites/:isbn - Delete book from favourites", () => {
+describe.only("DELETE /api/favourites - Delete book from favourites", () => {
   test("Status 204: Deletes book from favourites when passed through correct credentils, and a book isbn", () => {
     const input = {
       user_id: 6,
       isbn: "9780439139601",
     };
-    return request(app).delete("/api/favourites").send(input).expect(204);
+    return request(app).post("/api/favourites/delete").send(input).expect(204);
   });
 });

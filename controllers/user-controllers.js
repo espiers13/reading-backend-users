@@ -338,6 +338,7 @@ exports.deleteFromFavourites = (req, res, next) => {
       res.status(204).send(deletedBook);
     })
     .catch((err) => {
+      console.log(err);
       next(err);
     });
 };
