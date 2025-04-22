@@ -42,9 +42,19 @@ exports.createNewUser = (newUser) => {
     const queryStr = `INSERT INTO users (name, username, email, password) VALUES ($1, $2, $3, $4) RETURNING username, name, password, email, id, avatar, pronouns;`;
     const values = [name, username, email, hashedPassword];
 
-    return db.query(queryStr, values).then(({ rows }) => {
-      return rows[0];
-    });
+    return db
+      .query(queryStr, values)
+      .then(({ rows }) => {
+        return rows[0];
+      })
+      .catch((err) => {
+        if (err.code === "23505" && err.constraint === "users_username_key") {
+          return Promise.reject({
+            status: 409,
+            msg: "Username already exists!",
+          });
+        }
+      });
   });
 };
 

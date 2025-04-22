@@ -83,6 +83,22 @@ describe("POST /api/signup - Create new user", () => {
         expect(body.password).not.toBe(newUser.password);
       });
   });
+  test("Status 409: Returns correct status code and error message when username already exists", () => {
+    const newUser = {
+      name: "Emily Spiers",
+      username: "e.spiers13",
+      email: "test@test.com",
+      password: "thisisapassword",
+    };
+
+    return request(app)
+      .post("/api/signup")
+      .send(newUser)
+      .expect(409)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Username already exists!");
+      });
+  });
 });
 
 describe("GET /api/user/:user_id - Get username by ID", () => {
@@ -153,7 +169,7 @@ describe("DELETE /api/user/delete - Delete user by credentials", () => {
   });
 });
 
-describe.only("PATCH /api/user - Update user information", () => {
+describe("PATCH /api/user - Update user information", () => {
   test("Status 201: Updates user data when passed through new data and correct password/username", () => {
     const body = {
       username: "bob_smith",
