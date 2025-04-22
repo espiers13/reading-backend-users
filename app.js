@@ -54,7 +54,7 @@ app.get("/api/user/:user", getUser);
 
 // SEARCH USERS
 
-app.get("/api/search/users", searchUsers);
+app.post("/api/search/users", searchUsers);
 
 // DELETE USER REQUEST
 

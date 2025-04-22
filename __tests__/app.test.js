@@ -146,11 +146,11 @@ describe("GET /api/user/:username - Get user_id by username", () => {
   });
 });
 
-describe.only("GET /api/search/users - Search users by username", () => {
+describe.only("POST /api/search/users - Search users by username", () => {
   test("Status 200: returns an array of user objects where usernames begin with search_query", () => {
     const search_query = { search_query: "e" };
     return request(app)
-      .get("/api/search/users")
+      .post("/api/search/users")
       .send(search_query)
       .then(({ body }) => {
         expect(Array.isArray(body)).toBe(true);
