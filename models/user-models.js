@@ -84,6 +84,21 @@ exports.fetchIdByUsername = (username) => {
     });
 };
 
+exports.findUsers = (search_query) => {
+  return db
+    .query(
+      `
+  SELECT id, username, avatar 
+  FROM users 
+  WHERE username ILIKE $1 || '%';
+`,
+      [search_query]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
 exports.removeUserData = (userData) => {
   return db
     .query(`DELETE FROM users WHERE id = $1 RETURNING *;`, [userData.id])

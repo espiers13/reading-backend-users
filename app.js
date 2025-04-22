@@ -26,6 +26,7 @@ const {
   updateJournal,
   patchUserPassword,
   deleteFriend,
+  searchUsers,
 } = require("./controllers/user-controllers");
 
 const {
@@ -50,6 +51,10 @@ app.post("/api/signup", postNewUser);
 // GET USER
 
 app.get("/api/user/:user", getUser);
+
+// SEARCH USERS
+
+app.get("/api/search/users", searchUsers);
 
 // DELETE USER REQUEST
 

@@ -23,6 +23,7 @@ const {
   updateReview,
   updateUserPassword,
   removeFriend,
+  findUsers,
 } = require("../models/user-models");
 
 exports.getUserByCredentials = (req, res, next) => {
@@ -68,6 +69,18 @@ exports.getUser = (req, res, next) => {
         next(err);
       });
   }
+};
+
+exports.searchUsers = (req, res, next) => {
+  const { search_query } = req.body;
+  findUsers(search_query)
+    .then((users) => {
+      console.log(users);
+      res.status(201).send(users);
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.deleteUserByCredentials = (req, res, next) => {
