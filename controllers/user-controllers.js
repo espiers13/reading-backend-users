@@ -85,11 +85,16 @@ exports.deleteUserByCredentials = (req, res, next) => {
 
 exports.patchUserData = (req, res, next) => {
   const { username, password, newData } = req.body;
+
   fetchUserByUsernamePassword(username, password)
     .then((userData) => {
-      updateUserData(userData, newData).then((updatedData) => {
-        res.status(201).send(updatedData);
-      });
+      return updateUserData(userData, newData);
+    })
+    .then((updatedData) => {
+      res.status(201).send(updatedData);
+    })
+    .catch((err) => {
+      next(err);
     })
     .catch((err) => {
       next(err);

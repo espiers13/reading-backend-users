@@ -24,14 +24,6 @@ module.exports = [
   },
   {
     user_id: 6,
-    isbn: "9781398515703",
-    date_read: "2025-02-18",
-    review:
-      "So juicy and dramatic—I couldn’t get enough! Evelyn Hugo is iconic.",
-    rating: 5,
-  },
-  {
-    user_id: 6,
     isbn: "9781526635297",
     date_read: "2025-02-14",
     review: null,

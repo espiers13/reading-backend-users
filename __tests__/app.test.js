@@ -130,7 +130,7 @@ describe("GET /api/user/:username - Get user_id by username", () => {
   });
 });
 
-describe.only("DELETE /api/user/delete - Delete user by credentials", () => {
+describe("DELETE /api/user/delete - Delete user by credentials", () => {
   test("Status 204: Deletes user when username and password match, returns an empty object", () => {
     const credentials = { username: "bob_smith", password: "Secure#5678" };
     return request(app)
@@ -153,7 +153,7 @@ describe.only("DELETE /api/user/delete - Delete user by credentials", () => {
   });
 });
 
-describe("PATCH /api/user - Update user information", () => {
+describe.only("PATCH /api/user - Update user information", () => {
   test("Status 201: Updates user data when passed through new data and correct password/username", () => {
     const body = {
       username: "bob_smith",
@@ -207,6 +207,23 @@ describe("PATCH /api/user - Update user information", () => {
       .expect(201)
       .then(({ body }) => {
         expect(body).toEqual(expected);
+      });
+  });
+  test("Status 401: Returns appropriate error code when username is already taken", () => {
+    const credentials = {
+      username: "bob_smith",
+      password: "Secure#5678",
+      newData: {
+        username: "alice_j",
+      },
+    };
+    return request(app)
+      .patch("/api/user")
+      .send(credentials)
+      .expect(409)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.msg).toBe("Username already exists!");
       });
   });
   test("Status 401: Returns appropriate error code and message when incorrect password is sent through", () => {

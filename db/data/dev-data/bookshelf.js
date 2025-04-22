@@ -9,7 +9,6 @@ module.exports = [
   { user_id: 4, isbn: "9780735219090" },
   { user_id: 5, isbn: "9780345803481" },
   { user_id: 5, isbn: "9780743273565" },
-  { user_id: 6, isbn: "9780349436982" },
   { user_id: 6, isbn: "9781635577020" },
   { user_id: 6, isbn: "9781635574074" },
 ];
