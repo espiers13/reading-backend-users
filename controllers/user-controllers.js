@@ -22,6 +22,7 @@ const {
   updateRating,
   updateReview,
   updateUserPassword,
+  removeFriend,
 } = require("../models/user-models");
 
 exports.getUserByCredentials = (req, res, next) => {
@@ -295,6 +296,19 @@ exports.acceptFriendRequest = (req, res, next) => {
         .catch((err) => {
           next(err);
         });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteFriend = (req, res, next) => {
+  const { friend_id } = req.params;
+  const { user_id } = req.body;
+
+  removeFriend(user_id, friend_id)
+    .then(({ friend }) => {
+      res.status(204).send(friend);
     })
     .catch((err) => {
       next(err);

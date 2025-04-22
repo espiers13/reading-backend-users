@@ -290,6 +290,17 @@ exports.addFriend = (userId, friendId) => {
     });
 };
 
+exports.removeFriend = (userId, friendId) => {
+  return db
+    .query(
+      `DELETE FROM friendships WHERE user_id = $1 AND friend_id = $2 RETURNING *;`,
+      [userId, friendId]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
 exports.fetchFriendsList = (userId) => {
   return db
     .query(

@@ -523,6 +523,25 @@ describe("PATCH /api/friends/accept/:friend_id - Accept a friend request", () =>
   });
 });
 
+describe("POST /api/friends/delete/:friend_id - Remove a friend", () => {
+  test("Status 204: deletes a friend from friend list", async () => {
+    const input = { user_id: 1 };
+
+    await request(app).post("/api/friends/request/4").send(input).expect(200);
+
+    await request(app).patch("/api/friends/accept/4").send(input).expect(200);
+
+    await request(app).post("/api/friends/delete/4").send(input).expect(204);
+
+    return request(app)
+      .get("/api/friends/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.some((obj) => obj.username === "david_b")).toBe(false);
+      });
+  });
+});
+
 describe("GET /api/friends/:user_id - See all friends", () => {
   test("Status 200: Returns an array of all friend_id user is friends with", async () => {
     const input = { user_id: 1 };

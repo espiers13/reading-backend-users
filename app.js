@@ -25,6 +25,7 @@ const {
   logBookAsRead,
   updateJournal,
   patchUserPassword,
+  deleteFriend,
 } = require("./controllers/user-controllers");
 
 const {
@@ -105,6 +106,10 @@ app.post("/api/friends/request/:friend_id", friendRequest);
 // ACCEPT FRIEND REQUEST
 
 app.patch("/api/friends/accept/:friend_id", acceptFriendRequest);
+
+// REMOVE FRIEND FROM LIST
+
+app.post("/api/friends/delete/:friend_id", deleteFriend);
 
 // GET FRIENDS LIST
 
