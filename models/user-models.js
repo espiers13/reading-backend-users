@@ -60,7 +60,9 @@ exports.createNewUser = (newUser) => {
 
 exports.fetchUserById = (user_id) => {
   return db
-    .query("SELECT username, avatar FROM users WHERE id = $1", [user_id])
+    .query("SELECT username, avatar, pronouns FROM users WHERE id = $1", [
+      user_id,
+    ])
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({
