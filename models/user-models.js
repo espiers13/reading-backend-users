@@ -254,6 +254,33 @@ exports.updateRating = (update, user_id) => {
     });
 };
 
+exports.patchJournal = (update, user_id) => {
+  const { isbn, ...fields } = update;
+
+  if (!isbn) {
+    throw new Error("ISBN is required for updating the journal.");
+  }
+
+  const keys = Object.keys(fields);
+  if (keys.length === 0) {
+    throw new Error("No fields to update.");
+  }
+
+  const setClauses = keys.map((key, i) => `${key} = $${i + 1}`);
+  const values = keys.map((key) => fields[key]);
+
+  const query = `
+    UPDATE booksjournal
+    SET ${setClauses.join(", ")}
+    WHERE user_id = $${keys.length + 1} AND isbn = $${keys.length + 2}
+    RETURNING *;
+  `;
+
+  return db
+    .query(query, [...values, user_id, isbn])
+    .then(({ rows }) => rows[0]);
+};
+
 exports.updateReview = (update, user_id) => {
   const { isbn, review } = update;
 

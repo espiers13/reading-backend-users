@@ -24,6 +24,7 @@ const {
   updateUserPassword,
   removeFriend,
   findUsers,
+  patchJournal,
 } = require("../models/user-models");
 
 exports.getUserByCredentials = (req, res, next) => {
@@ -193,6 +194,7 @@ exports.postJournal = (req, res, next) => {
       next(err);
     });
 };
+
 exports.deleteFromJournal = (req, res, next) => {
   const { isbn } = req.query; // ISBN from the query parameter
   const { user_id } = req.params;
@@ -254,25 +256,34 @@ exports.updateJournal = (req, res, next) => {
   const update = req.body;
   const { user_id } = req.params;
 
-  if ("rating" in update) {
-    updateRating(update, user_id)
-      .then((updatedBook) => {
-        res.status(200).send(updatedBook);
-      })
-      .catch((err) => {
-        next(err);
-      });
-  }
+  patchJournal(update, user_id)
+    .then((updatedBook) => {
+      res.status(200).send(updatedBook);
+    })
+    .catch((err) => {
+      console.log(error);
+      next(err);
+    });
 
-  if ("review" in update) {
-    updateReview(update, user_id)
-      .then((updatedBook) => {
-        res.status(200).send(updatedBook);
-      })
-      .catch((err) => {
-        next(err);
-      });
-  }
+  // if ("rating" in update) {
+  //   updateRating(update, user_id)
+  //     .then((updatedBook) => {
+  //       res.status(200).send(updatedBook);
+  //     })
+  //     .catch((err) => {
+  //       next(err);
+  //     });
+  // }
+
+  // if ("review" in update) {
+  //   updateReview(update, user_id)
+  //     .then((updatedBook) => {
+  //       res.status(200).send(updatedBook);
+  //     })
+  //     .catch((err) => {
+  //       next(err);
+  //     });
+  // }
 };
 
 exports.friendRequest = (req, res, next) => {

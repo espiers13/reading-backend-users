@@ -146,7 +146,7 @@ describe("GET /api/user/:username - Get user_id by username", () => {
   });
 });
 
-describe.only("POST /api/search/users - Search users by username", () => {
+describe("POST /api/search/users - Search users by username", () => {
   test("Status 200: returns an array of user objects where usernames begin with search_query", () => {
     const search_query = { search_query: "e" };
     return request(app)
@@ -484,7 +484,7 @@ describe("POST /api/bookshelf/:user_id/read - log book as read in the journal", 
   });
 });
 
-describe("PATCH /api/journal/:user_id - update book rating or review with user_id and isbn", () => {
+describe.only("PATCH /api/journal/:user_id - update book rating or review with user_id and isbn", () => {
   test("Status 200: Returns book in journal with updated rating", () => {
     const input = { rating: 5, isbn: "9781526635365" };
     const user_id = 6;
@@ -507,6 +507,18 @@ describe("PATCH /api/journal/:user_id - update book rating or review with user_i
       .expect(200)
       .then(({ body }) => {
         expect(body.review).toBe("Loved it!");
+      });
+  });
+  test("status 200: update date book read in journal", () => {
+    const input = { date_read: "2025-04-04", isbn: "9781526635365" };
+    const user_id = 6;
+
+    return request(app)
+      .patch(`/api/journal/${user_id}`)
+      .send(input)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.date_read).toBe("2025-04-03T23:00:00.000Z");
       });
   });
 });
@@ -551,7 +563,7 @@ describe("POST /api/friends/delete/:friend_id - Remove a friend", () => {
     await request(app).post("/api/friends/delete/4").send(input).expect(204);
 
     return request(app)
-      .get("/api/friends/1")
+      .get("/api/friends/pending/4")
       .expect(200)
       .then(({ body }) => {
         expect(body.some((obj) => obj.username === "david_b")).toBe(false);
