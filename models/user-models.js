@@ -217,30 +217,6 @@ exports.removeFromJournal = (isbn, id) => {
     });
 };
 
-exports.moveBookToJournal = (isbn, user_id, rating, review) => {
-  return db
-    .query(
-      `WITH moved_book AS (
-         DELETE FROM bookshelf
-         WHERE user_id = $1 AND isbn = $2
-         RETURNING user_id, isbn
-       )
-       INSERT INTO booksjournal (isbn, user_id, date_read, rating, review)
-       SELECT m.isbn, m.user_id, CURRENT_DATE, $3, $4
-       FROM moved_book m
-       RETURNING *;`,
-      [user_id, isbn, rating, review]
-    )
-    .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "Book not found",
-        });
-      } else return rows[0];
-    });
-};
-
 exports.updateRating = (update, user_id) => {
   const { isbn, rating } = update;
 
@@ -467,5 +443,29 @@ exports.removeCurrentlyReading = (user_id) => {
     ])
     .then(({ rows }) => {
       return rows[0];
+    });
+};
+
+exports.moveToJournal = (isbn, user_id, rating, review) => {
+  return db
+    .query(
+      `WITH deleted_from_currentlyreading AS (
+         DELETE FROM currentlyreading
+         WHERE user_id = $1 AND isbn = $2
+         RETURNING user_id, isbn
+       )
+       INSERT INTO booksjournal (isbn, user_id, date_read, rating, review)
+       SELECT m.isbn, m.user_id, CURRENT_DATE, $3, $4
+       FROM deleted_from_currentlyreading m
+       RETURNING *;`,
+      [user_id, isbn, rating, review]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "Book not found in currentlyreading",
+        });
+      } else return rows[0];
     });
 };

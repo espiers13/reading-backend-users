@@ -27,6 +27,7 @@ const {
   patchCurrentlyReading,
   postCurrentlyReading,
   removeCurrentlyReading,
+  moveToJournal,
 } = require("../models/user-models");
 
 exports.getUserByCredentials = (req, res, next) => {
@@ -78,7 +79,6 @@ exports.searchUsers = (req, res, next) => {
   const { search_query } = req.body;
   findUsers(search_query)
     .then((users) => {
-      console.log(users);
       res.status(201).send(users);
     })
     .catch((err) => {
@@ -192,7 +192,7 @@ exports.postJournal = (req, res, next) => {
       res.status(201).send(bookData);
     })
     .catch((err) => {
-      console.error("Error in postJournal:", err); // Add this for better debugging
+      console.error("Error in postJournal:", err);
       next(err);
     });
 };
@@ -210,50 +210,6 @@ exports.deleteFromJournal = (req, res, next) => {
     });
 };
 
-exports.markBookAsRead = (req, res, next) => {
-  const { isbn, rating = null, review = null } = req.body;
-  const { user_id } = req.params;
-
-  moveBookToJournal(isbn, user_id, rating, review)
-    .then((bookData) => {
-      res.status(201).send(bookData);
-    })
-    .catch((err) => {
-      next(err);
-    });
-};
-
-exports.logBookAsRead = (req, res, next) => {
-  const { isbn, rating = null, review = null } = req.body;
-  const { user_id } = req.params;
-  const newBook = { isbn, rating, review };
-
-  fetchBookshelfById(user_id).then((bookshelfData) => {
-    if (bookshelfData.some((book) => book.isbn === isbn)) {
-      //if the book does exist in bookshelf
-      moveBookToJournal(isbn, user_id, rating, review)
-        .then((bookData) => {
-          res.status(201).send(bookData);
-        })
-        .catch((err) => {
-          console.error(err);
-          next(err);
-        });
-    }
-    if (!bookshelfData.some((book) => book.isbn === isbn)) {
-      //if book does not exist in bookshelf
-      postToJournal(user_id, newBook)
-        .then((bookData) => {
-          res.status(201).send(bookData);
-        })
-        .catch((err) => {
-          console.error(err);
-          next(err);
-        });
-    }
-  });
-};
-
 exports.updateJournal = (req, res, next) => {
   const update = req.body;
   const { user_id } = req.params;
@@ -263,7 +219,6 @@ exports.updateJournal = (req, res, next) => {
       res.status(200).send(updatedBook);
     })
     .catch((err) => {
-      console.log(error);
       next(err);
     });
 };
@@ -377,7 +332,6 @@ exports.deleteFromFavourites = (req, res, next) => {
       res.status(204).send(deletedBook);
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
@@ -398,25 +352,31 @@ exports.updateCurrentlyReading = (req, res, next) => {
   const { user_id } = req.params;
   const { isbn } = req.body;
 
-  fetchCurrentlyReading(user_id).then((book) => {
-    if (book) {
-      patchCurrentlyReading(user_id, isbn)
-        .then((book) => {
-          res.status(200).send(book);
-        })
-        .catch((err) => {
-          next(err);
-        });
-    } else {
-      postCurrentlyReading(user_id, isbn)
-        .then((book) => {
-          res.status(201).send(book);
-        })
-        .catch((err) => {
-          next(err);
-        });
-    }
-  });
+  removeFromBookshelf(isbn, user_id)
+    .then(() => {
+      fetchCurrentlyReading(user_id).then((book) => {
+        if (book) {
+          patchCurrentlyReading(user_id, isbn)
+            .then((book) => {
+              res.status(200).send(book);
+            })
+            .catch((err) => {
+              next(err);
+            });
+        } else {
+          postCurrentlyReading(user_id, isbn)
+            .then((book) => {
+              res.status(201).send(book);
+            })
+            .catch((err) => {
+              next(err);
+            });
+        }
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.deleteCurrentlyReading = (req, res, next) => {
@@ -425,6 +385,44 @@ exports.deleteCurrentlyReading = (req, res, next) => {
   removeCurrentlyReading(user_id)
     .then(() => {
       res.sendStatus(204);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.finishBook = (req, res, next) => {
+  const { user_id } = req.params;
+  const { isbn, rating, review } = req.body;
+
+  moveToJournal(isbn, user_id, rating, review)
+    .then((book) => {
+      res.status(200).send(book);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.markBookAsRead = (req, res, next) => {
+  const { isbn, rating = null, review = null } = req.body;
+  const { user_id } = req.params;
+  const newBook = { isbn, rating, review };
+  removeCurrentlyReading(user_id)
+    .then((data) => {
+      removeFromBookshelf(isbn, user_id)
+        .then((data) => {
+          postToJournal(user_id, newBook)
+            .then((bookData) => {
+              res.status(201).send(bookData);
+            })
+            .catch((err) => {
+              next(err);
+            });
+        })
+        .catch((err) => {
+          next(err);
+        });
     })
     .catch((err) => {
       next(err);

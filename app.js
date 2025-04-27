@@ -30,6 +30,7 @@ const {
   getCurrentlyReading,
   updateCurrentlyReading,
   deleteCurrentlyReading,
+  finishBook,
 } = require("./controllers/user-controllers");
 
 const {
@@ -101,7 +102,7 @@ app.patch("/api/bookshelf/:user_id/move", markBookAsRead);
 
 // LOG BOOK AS READ
 
-app.post("/api/bookshelf/:user_id/read", logBookAsRead);
+app.post("/api/bookshelf/:user_id/read", markBookAsRead);
 
 // UPDATE BOOK IN JOURNAL
 
@@ -150,6 +151,10 @@ app.post("/api/:user_id/currentlyreading", updateCurrentlyReading);
 // DELETE CURRENTLY READING
 
 app.delete("/api/:user_id/currentlyreading", deleteCurrentlyReading);
+
+// MOVE FROM CURRENTLY READING TO JOURNAL
+
+app.patch("/api/:user_id/currentlyreading/move", markBookAsRead);
 
 app.use(handlePSQLErrors);
 app.use(handleCustomErrors);

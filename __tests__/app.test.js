@@ -111,6 +111,7 @@ describe("GET /api/user/:user_id - Get username by ID", () => {
           username: "alice_j",
           avatar:
             "https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg",
+          pronouns: null,
         });
       });
   });
@@ -377,7 +378,7 @@ describe("DELETE /api/bookshelf/:user_id?isbn=[isbn] - Delete a book from the bo
   });
 });
 
-describe("POST /api/journal - Add a new book to journal", () => {
+describe("POST /api/journal/:user_id - Add a new book to journal", () => {
   test("Status 201: Posts a new book object to journal database, linking to user_id when correct username and password are passed through", () => {
     const input = {
       user_id: "1",
@@ -424,21 +425,6 @@ describe("PATCH /api/bookshelf/:user_id/move - Move book from bookshelf to journ
         expect(body).toHaveProperty("rating");
         expect(body).toHaveProperty("review");
         expect(body).toHaveProperty("date_read");
-      });
-  });
-
-  test("Status 404: Returns appropriate error code and message when isbn does not exist in the users journal", () => {
-    const input = {
-      isbn: "9780743273565",
-      rating: 3,
-      review: "It was good!",
-    };
-    return request(app)
-      .patch("/api/bookshelf/2/move")
-      .send(input)
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Book not found");
       });
   });
 });
@@ -761,5 +747,22 @@ describe("POST /:user_id/currentlyreading - posts a book to currently reading wh
 describe("DELETE /:user_id/currentlyreading - clears currently reading for user_id", () => {
   test("Status 204: Returns correct status code and clears currently reading for user_id", () => {
     return request(app).delete("/api/6/currentlyreading").expect(204);
+  });
+});
+
+describe("PATCH /:user_id/currentlyreading/move", () => {
+  test("Status 200: Isbn and user_id object is removed from currently reading and added to journal", () => {
+    const input = { isbn: "9781635574050", rating: 4, review: "good" };
+    return request(app)
+      .patch("/api/6/currentlyreading/move")
+      .send(input)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("id");
+        expect(body).toHaveProperty("user_id");
+        expect(body).toHaveProperty("rating");
+        expect(body).toHaveProperty("review");
+        expect(body).toHaveProperty("date_read");
+      });
   });
 });
