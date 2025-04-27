@@ -427,3 +427,45 @@ exports.removeFromFavourites = (userId, isbn) => {
       return deletedBook;
     });
 };
+
+exports.fetchCurrentlyReading = (user_id) => {
+  return db
+    .query(`SELECT user_id, isbn FROM currentlyreading WHERE user_id = $1;`, [
+      user_id,
+    ])
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
+exports.patchCurrentlyReading = (user_id, isbn) => {
+  return db
+    .query(
+      `UPDATE currentlyreading SET isbn = $1 WHERE user_id = $2 RETURNING user_id, isbn;`,
+      [isbn, user_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
+exports.postCurrentlyReading = (user_id, isbn) => {
+  return db
+    .query(
+      `INSERT INTO currentlyreading (user_id, isbn) VALUES ($1, $2) RETURNING user_id, isbn;`,
+      [user_id, isbn]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
+exports.removeCurrentlyReading = (user_id) => {
+  return db
+    .query(`DELETE FROM currentlyreading WHERE user_id = $1 RETURNING *;`, [
+      user_id,
+    ])
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};

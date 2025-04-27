@@ -19,12 +19,14 @@ const {
   fetchFavouritesByUserId,
   postFavouriteById,
   removeFromFavourites,
-  updateRating,
-  updateReview,
   updateUserPassword,
   removeFriend,
   findUsers,
   patchJournal,
+  fetchCurrentlyReading,
+  patchCurrentlyReading,
+  postCurrentlyReading,
+  removeCurrentlyReading,
 } = require("../models/user-models");
 
 exports.getUserByCredentials = (req, res, next) => {
@@ -264,26 +266,6 @@ exports.updateJournal = (req, res, next) => {
       console.log(error);
       next(err);
     });
-
-  // if ("rating" in update) {
-  //   updateRating(update, user_id)
-  //     .then((updatedBook) => {
-  //       res.status(200).send(updatedBook);
-  //     })
-  //     .catch((err) => {
-  //       next(err);
-  //     });
-  // }
-
-  // if ("review" in update) {
-  //   updateReview(update, user_id)
-  //     .then((updatedBook) => {
-  //       res.status(200).send(updatedBook);
-  //     })
-  //     .catch((err) => {
-  //       next(err);
-  //     });
-  // }
 };
 
 exports.friendRequest = (req, res, next) => {
@@ -396,6 +378,55 @@ exports.deleteFromFavourites = (req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
+      next(err);
+    });
+};
+
+exports.getCurrentlyReading = (req, res, next) => {
+  const { user_id } = req.params;
+
+  fetchCurrentlyReading(user_id)
+    .then((book) => {
+      res.status(200).send(book);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.updateCurrentlyReading = (req, res, next) => {
+  const { user_id } = req.params;
+  const { isbn } = req.body;
+
+  fetchCurrentlyReading(user_id).then((book) => {
+    if (book) {
+      patchCurrentlyReading(user_id, isbn)
+        .then((book) => {
+          res.status(200).send(book);
+        })
+        .catch((err) => {
+          next(err);
+        });
+    } else {
+      postCurrentlyReading(user_id, isbn)
+        .then((book) => {
+          res.status(201).send(book);
+        })
+        .catch((err) => {
+          next(err);
+        });
+    }
+  });
+};
+
+exports.deleteCurrentlyReading = (req, res, next) => {
+  const { user_id } = req.params;
+
+  removeCurrentlyReading(user_id)
+    .then(() => {
+      res.sendStatus(204);
+    })
+    .catch((err) => {
       next(err);
     });
 };

@@ -484,7 +484,7 @@ describe("POST /api/bookshelf/:user_id/read - log book as read in the journal", 
   });
 });
 
-describe.only("PATCH /api/journal/:user_id - update book rating or review with user_id and isbn", () => {
+describe("PATCH /api/journal/:user_id - update book rating or review with user_id and isbn", () => {
   test("Status 200: Returns book in journal with updated rating", () => {
     const input = { rating: 5, isbn: "9781526635365" };
     const user_id = 6;
@@ -510,6 +510,18 @@ describe.only("PATCH /api/journal/:user_id - update book rating or review with u
       });
   });
   test("status 200: update date book read in journal", () => {
+    const input = { date_read: "2025-04-04", isbn: "9781526635365" };
+    const user_id = 6;
+
+    return request(app)
+      .patch(`/api/journal/${user_id}`)
+      .send(input)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.date_read).toBe("2025-04-03T23:00:00.000Z");
+      });
+  });
+  test("status 200: update date book AND review AND rating read in journal", () => {
     const input = { date_read: "2025-04-04", isbn: "9781526635365" };
     const user_id = 6;
 
@@ -698,5 +710,56 @@ describe("DELETE /api/favourites - Delete book from favourites", () => {
       isbn: "9780439139601",
     };
     return request(app).post("/api/favourites/delete").send(input).expect(204);
+  });
+});
+
+describe("GET /:user_id/currentlyreading - get currently reading book by user_id", () => {
+  test("Status 200: Returns an object containing user_id and isbn of currently reading when passed throug a user_id", () => {
+    const expected = { user_id: 6, isbn: "9781635574050" };
+    return request(app)
+      .get("/api/6/currentlyreading")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual(expected);
+      });
+  });
+  test("Status 200: Returns an empty object when user has no currently reading", () => {
+    return request(app)
+      .get("/api/1/currentlyreading")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+});
+
+describe("POST /:user_id/currentlyreading - posts a book to currently reading when sent through an isbn and user_id", () => {
+  test("Status 204: Posts to currently reading and returns new currently reading", () => {
+    const input = { isbn: "9781635574050" };
+    const expected = { user_id: 1, isbn: "9781635574050" };
+    return request(app)
+      .post("/api/1/currentlyreading")
+      .send(input)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toEqual(expected);
+      });
+  });
+  test("Status 201: Updates currently reading with new book when posted, and deletes existing book from database", () => {
+    const input = { isbn: "9781635574050" };
+    const expected = { user_id: 3, isbn: "9781635574050" };
+    return request(app)
+      .post("/api/3/currentlyreading")
+      .send(input)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual(expected);
+      });
+  });
+});
+
+describe("DELETE /:user_id/currentlyreading - clears currently reading for user_id", () => {
+  test("Status 204: Returns correct status code and clears currently reading for user_id", () => {
+    return request(app).delete("/api/6/currentlyreading").expect(204);
   });
 });

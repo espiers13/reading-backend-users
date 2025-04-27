@@ -2,7 +2,13 @@ const db = require("../index.js");
 const format = require("pg-format");
 const hashUsersData = require("./utils.js"); // Import the utility function
 
-const seed = ({ usersData, bookshelfData, booksReadData, favouritesData }) => {
+const seed = ({
+  usersData,
+  bookshelfData,
+  booksReadData,
+  favouritesData,
+  currentlyReadingData,
+}) => {
   return db
     .query(`DROP TABLE IF EXISTS favourites;`)
     .then(() => {
@@ -13,6 +19,9 @@ const seed = ({ usersData, bookshelfData, booksReadData, favouritesData }) => {
     })
     .then(() => {
       return db.query(`DROP TABLE IF EXISTS friendships;`);
+    })
+    .then(() => {
+      return db.query(`DROP TABLE IF EXISTS currentlyreading`);
     })
     .then(() => {
       return db.query(`DROP TABLE IF EXISTS users;`);
@@ -75,6 +84,15 @@ const seed = ({ usersData, bookshelfData, booksReadData, favouritesData }) => {
       `);
     })
     .then(() => {
+      return db.query(`
+      CREATE TABLE currentlyreading (
+        id SERIAL PRIMARY KEY,
+        user_id INT REFERENCES users(id) ON DELETE CASCADE,
+        isbn VARCHAR(13) NOT NULL,
+        UNIQUE (user_id)
+      )`);
+    })
+    .then(() => {
       return hashUsersData(usersData);
     })
     .then((hashedUsersData) => {
@@ -110,6 +128,13 @@ const seed = ({ usersData, bookshelfData, booksReadData, favouritesData }) => {
         favouritesData.map(({ user_id, isbn }) => [user_id, isbn])
       );
       return db.query(insertFavouritesString);
+    })
+    .then(() => {
+      const insertCurrentlyReadingString = format(
+        "INSERT INTO currentlyreading (user_id, isbn) VALUES %L RETURNING *;",
+        currentlyReadingData.map(({ user_id, isbn }) => [user_id, isbn])
+      );
+      return db.query(insertCurrentlyReadingString);
     });
 };
 

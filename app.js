@@ -27,6 +27,9 @@ const {
   patchUserPassword,
   deleteFriend,
   searchUsers,
+  getCurrentlyReading,
+  updateCurrentlyReading,
+  deleteCurrentlyReading,
 } = require("./controllers/user-controllers");
 
 const {
@@ -135,6 +138,18 @@ app.post("/api/favourites", postNewFavourite);
 // DELETE FAVOURITE
 
 app.post("/api/favourites/delete", deleteFromFavourites);
+
+// GET CURRENTLY READING
+
+app.get("/api/:user_id/currentlyreading", getCurrentlyReading);
+
+// UPDATE CURRENTLY READING
+
+app.post("/api/:user_id/currentlyreading", updateCurrentlyReading);
+
+// DELETE CURRENTLY READING
+
+app.delete("/api/:user_id/currentlyreading", deleteCurrentlyReading);
 
 app.use(handlePSQLErrors);
 app.use(handleCustomErrors);
